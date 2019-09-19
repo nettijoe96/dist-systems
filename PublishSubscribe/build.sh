@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 
 DIR="pubsub"
-PACKETDIR="/packet"
+PACKETDIR="packet"
 
 echo "Starting build"
 
-javac ./pubsub/packet/Packet.java
+cd $DIR
 
-for entry in "$DIR$PACKETDIR"/*.java
+for entry in "$PACKETDIR"/*.java
 do
     echo "Building $entry"
     javac "$entry"
 done
+
+cd ..
 
 for entry in "$DIR"/*.java
 do
