@@ -13,14 +13,14 @@ public class EventManager{
 	/*
 	 * notify all subscribers of new event 
 	 */
-	private void notifySubscribers(Event event) {
+	private void notifySubscribers() {
 		
 	}
 	
 	/*
 	 * add new topic when received advertisement of new topic
 	 */
-	private void addTopic(Topic topic){
+	private void addTopic(){
 		
 	}
 	
@@ -41,7 +41,7 @@ public class EventManager{
 	/*
 	 * show the list of subscriber for a specified topic
 	 */
-	private void showSubscribers(Topic topic){
+	private void showSubscribers(){
 		
 	}
 	

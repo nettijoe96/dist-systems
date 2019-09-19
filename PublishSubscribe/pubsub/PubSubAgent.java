@@ -4,19 +4,19 @@ package pubsub;
 public class PubSubAgent implements Publisher, Subscriber{
 
 	@Override
-	public void subscribe(Topic topic) {
+	public void subscribe() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void subscribe(String keyword) {
+	public void subscribe() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void unsubscribe(Topic topic) {
+	public void unsubscribe() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -40,11 +40,9 @@ public class PubSubAgent implements Publisher, Subscriber{
 	}
 
 	@Override
-	public void advertise(Topic newTopic) {
+	public void advertise() {
 		// TODO Auto-generated method stub
 		
 	}
 
-
-	
 }

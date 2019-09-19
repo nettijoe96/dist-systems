@@ -7,5 +7,4 @@ $ chmod 755 build.sh
 
 $ ./build.sh
 
-
-https://www.usenix.org/legacy/event/imc05/tech/full_papers/liu_hongzhou/liu_hongzhou_html/paper.html
+http://mqtt.org/documentation
