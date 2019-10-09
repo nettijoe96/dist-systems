@@ -2,19 +2,14 @@ package pubsub;
 
 public interface Subscriber {
 	/*
-	 * subscribe to a topic
-	 */
-	public void subscribe();
-	
-	/*
 	 * subscribe to a topic with matching keywords
 	 */
-	public void subscribe();
+	public void subscribe( String keyword );
 	
 	/*
 	 * unsubscribe from a topic 
 	 */
-	public void unsubscribe();
+	public void unsubscribe( String topic );
 	
 	/*
 	 * unsubscribe to all subscribed topics

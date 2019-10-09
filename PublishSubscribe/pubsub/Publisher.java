@@ -1,6 +1,6 @@
 package pubsub;
 
-import packet.*;
+import pubsub.packet.*;
 
 public interface Publisher {
 	/*

@@ -1,7 +1,7 @@
 package pubsub;
 
 
-public class EventManager{
+public class Broker{
 	
 	/*
 	 * Start the repo service
@@ -47,7 +47,7 @@ public class EventManager{
 	
 	
 	public static void main(String[] args) {
-		new EventManager().startService();
+		new Broker().startService();
 	}
 
 
