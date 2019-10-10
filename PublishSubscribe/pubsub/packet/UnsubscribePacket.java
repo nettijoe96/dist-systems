@@ -5,7 +5,7 @@ public class UnsubscribePacket extends Packet{
     
 
     public UnsubscribePacket( Topic topic ){
-        super();
+        super("unsubscribe");
         this.topic = topic;
     }
 

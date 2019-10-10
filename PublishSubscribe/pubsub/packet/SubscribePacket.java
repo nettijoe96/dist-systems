@@ -4,7 +4,7 @@ public class SubscribePacket extends Packet{
     private Topic topic;
 
     public SubscribePacket( Topic topic ){
-        super();
+        super("subscribe");
         this.topic = topic;
     }
 

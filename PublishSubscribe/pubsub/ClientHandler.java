@@ -1,6 +1,8 @@
 package pubsub;
 
 import pubsub.packet.*;
+import java.net.*;
+import java.io.*;
 
 public class ClientHandler implements Runnable{
     private Socket socket;
@@ -22,7 +24,7 @@ public class ClientHandler implements Runnable{
     }
 
     public void run(){
-        while true{
+        while(true){
             Packet packet = (Packet) this.in.readObject();
             packet = invokeBroker( packet );
             this.out.writeObject( packet );    

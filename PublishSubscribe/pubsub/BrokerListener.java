@@ -3,8 +3,10 @@ package pubsub;
 
 import java.util.concurrent.*;
 import pubsub.packet.*;
+import pubsub.*;
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 
 public class BrokerListener implements Runnable{
@@ -29,7 +31,7 @@ public class BrokerListener implements Runnable{
         this.port = port;
 
         this.serverSocket = new ServerSocket( this.port );
-        System.out.println("Server socket opened")
+        System.out.println("Server socket opened");
 
     }
 
@@ -52,7 +54,7 @@ public class BrokerListener implements Runnable{
     }
 
     private ConnackPacket invokeConnect( ConnectPacket connectPacket ){ 
-        if( connectPacket.getConnectionType().equals( SUBSCRIBER ){
+        if( connectPacket.getConnectionType().equals( SUBSCRIBER ) ){
             return invokeConnectSubscriber( connectPacket );
         } else {
             return invokeConnectPublisher( connectPacket );
@@ -69,9 +71,9 @@ public class BrokerListener implements Runnable{
 
 
     public void run(){
-        Socket socket = new Socket
+        Socket socket;
 
-        while true{
+        while(true){
             System.out.println("Waiting for client connection");
 
             socket = this.serverSocket.accept();

@@ -20,15 +20,14 @@ public class ClientInit implements Runnable{
     }
 
     public void run(){
-        ObjectInputSteam in = new ObjectInputStream( socket.getInputStream() );
+        ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
         Packet packet = (Packet) in.readObject();
         if( packet.getPacketType().equals(CONNECT) ){
             ConnectPacket connectPacket = (ConnectPacket) packet;
-            if( connectPacket.getConnectionType().equals( PUBLISHER ) ){
-                ConnackPacket connackPacket = listener.invoke( connectPacket );
-                SubHandler subHandler = new subHandler( this.socket, this.listener, connackPacket );
-                subHandler.start();
-            }else
+            ConnackPacket connackPacket = listener.invoke( connectPacket );
+            ClientHandler clientHandler = new ClientHandler( this.socket, this.listener, connackPacket );
+            Thread clientHandlerThread = new Thread( clientHandler );
+            clientHandlerThread.start();
         }
     }
 }
