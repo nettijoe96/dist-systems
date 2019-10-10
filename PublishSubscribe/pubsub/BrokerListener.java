@@ -29,7 +29,12 @@ public class BrokerListener implements Runnable{
         this.pubList = new PubList();
         this.port = port;
 
-        this.serverSocket = new ServerSocket( this.port );
+        try{
+            this.serverSocket = new ServerSocket( this.port );
+        }catch( Exception e ){
+            e.printStackTrace();
+        }
+
         System.out.println("Server socket opened");
 
     }
@@ -65,6 +70,7 @@ public class BrokerListener implements Runnable{
         if( packet.getPacketType().equals( CONNECT ) ){
             return invokeConnect( (ConnectPacket) packet );
         }
+        return null;
         // Add methods for all types of packets
     }
 
@@ -75,7 +81,11 @@ public class BrokerListener implements Runnable{
         while(true){
             System.out.println("Waiting for client connection");
 
-            socket = this.serverSocket.accept();
+            try{
+                socket = this.serverSocket.accept();
+            }catch( Exception e ){
+                e.printStackTrace();
+            }
 
             System.out.println("New client connected!");
 
