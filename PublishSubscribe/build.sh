@@ -17,7 +17,6 @@ cd ..
 
 for entry in "$DIR"/*.java
 do
-    pwd
     echo "Building $entry"
     javac "$entry"
 done

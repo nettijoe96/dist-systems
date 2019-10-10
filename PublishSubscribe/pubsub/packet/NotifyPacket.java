@@ -1,6 +1,5 @@
 package packet;
 
-public class PublishPacket extends Packet{
+public class NotifyPacket extends Packet{
     private Event event;
 }
-
