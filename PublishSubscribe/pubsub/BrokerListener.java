@@ -2,7 +2,6 @@ package pubsub;
 
 
 import java.util.concurrent.*;
-import pubsub.packet.*;
 import pubsub.*;
 import java.net.*;
 import java.io.*;

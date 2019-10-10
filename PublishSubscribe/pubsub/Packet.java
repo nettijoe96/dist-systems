@@ -1,4 +1,4 @@
-package packet;
+package pubsub;
 
 import java.net.NetworkInterface;
 import java.net.InetAddress;

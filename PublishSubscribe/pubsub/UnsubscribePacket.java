@@ -1,4 +1,4 @@
-package packet;
+package pubsub;
 
 public class UnsubscribePacket extends Packet{
     private Topic topic;

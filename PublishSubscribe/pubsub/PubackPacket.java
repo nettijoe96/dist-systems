@@ -1,4 +1,4 @@
-package packet;
+package pubsub;
 
 public class PubackPacket extends Packet{
     public PubackPacket(){

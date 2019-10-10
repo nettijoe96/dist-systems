@@ -1,4 +1,4 @@
-package packet;
+package pubsub;
 
 public class NotifyPacket extends Packet{
     private Event event;

@@ -1,7 +1,6 @@
 package pubsub;
 
 
-import pubsub.packet.*;
 import java.net.*;
 import java.io.*;
 

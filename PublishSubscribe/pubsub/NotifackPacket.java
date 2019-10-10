@@ -1,4 +1,4 @@
-package packet;
+package pubsub;
 
 public class NotifackPacket extends Packet{
     public NotifackPacket(){

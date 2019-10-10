@@ -1,6 +1,4 @@
-package packet;
-
-import packet.*;
+package pubsub;
 
 public class AdvertackPacket extends Packet{
     public AdvertackPacket(){
