@@ -11,6 +11,13 @@ public class Broker{
 	 * Start the repo service
 	 */
 	private void startService() {
+        BrokerListener listener = new BrokerListener( PORT );
+        listener.start();
+        System.out.println("Broker Listener Started");
+
+        BrokerCLI cli = new BrokerCLI();
+        cli.start();
+        System.out.println("Broker CLI Started");
 		
 	}
 
