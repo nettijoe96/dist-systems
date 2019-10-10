@@ -3,6 +3,10 @@ package pubsub;
 
 public class Broker{
 	
+    static final int PORT = 60666;
+    // How long to hold events
+    static final int TIME_TO_HOLD = 10000;
+
 	/*
 	 * Start the repo service
 	 */
