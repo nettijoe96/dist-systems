@@ -10,23 +10,30 @@ public class ClientHandler implements Runnable{
     private ObjectOutputStream out;
 
     public ClientHandler( Socket socket, BrokerListener listener, ConnackPacket connackPacket ){
-        this.socket = socket;
-        this.listener = listener;
-        this.out = new ObjectOutputStream( socket.getOutputStream() );
-        this.in = new ObjectInputStream( socket.getInputStream() );
-
-        this.out.writeObject( connackPacket );
+        try{
+            this.socket = socket;
+            this.listener = listener;
+            this.out = new ObjectOutputStream( socket.getOutputStream() );
+            this.in = new ObjectInputStream( socket.getInputStream() );
+            this.out.writeObject( connackPacket );
+        }catch( Exception e ){
+            e.printStackTrace();
+        }
     }
 
     private Packet invokeBroker( Packet packet ){
-        this.listener.invoke( packet );
+        return this.listener.invoke( packet );
     }
 
     public void run(){
         while(true){
-            Packet packet = (Packet) this.in.readObject();
-            packet = invokeBroker( packet );
-            this.out.writeObject( packet );    
+            try{
+                Packet packet = (Packet) this.in.readObject();
+                packet = invokeBroker( packet );
+                this.out.writeObject( packet );    
+            }catch( Exception e ){
+                e.printStackTrace();
+            }
         }
     }
 }

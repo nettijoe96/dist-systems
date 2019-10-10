@@ -12,11 +12,13 @@ public class Broker{
 	 */
 	private void startService() {
         BrokerListener listener = new BrokerListener( PORT );
-        listener.start();
+        Thread listenerThread = new Thread( listener );
+        listenerThread.start();
         System.out.println("Broker Listener Started");
 
         BrokerCLI cli = new BrokerCLI();
-        cli.start();
+        Thread cliThread = new Thread( cli );
+        cliThread.start();
         System.out.println("Broker CLI Started");
 		
 	}
@@ -58,7 +60,10 @@ public class Broker{
 	
 	
 	public static void main(String[] args) {
-		new Broker().startService();
+		// new Broker().startService();
+
+        Broker broker = new Broker();
+        broker.startService();
 	}
 
 

@@ -76,24 +76,20 @@ public class BrokerListener implements Runnable{
 
 
     public void run(){
-        Socket socket;
 
         while(true){
             System.out.println("Waiting for client connection");
 
             try{
+                Socket socket;
                 socket = this.serverSocket.accept();
+                System.out.println("New client connected!");
+
+                addClient( socket );
             }catch( Exception e ){
                 e.printStackTrace();
             }
-
-            System.out.println("New client connected!");
-
-            addClient( socket );
-
         }
     }
-
-
 }
 
