@@ -1,3 +1,8 @@
+/*
+ * Don't think this interface is useful
+ * Would rather use this as a client
+ */
+
 package pubsub;
 
 public interface Subscriber {

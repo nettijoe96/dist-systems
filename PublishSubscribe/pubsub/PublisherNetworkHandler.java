@@ -1,3 +1,7 @@
+/*
+ * A Thread that handles all sending of packets
+ */
+
 package pubsub;
 
 public class PublisherNetworkHandler implements Runnable{

@@ -1,3 +1,8 @@
+/*
+ * One of the original classes
+ * Topics are just strings though?
+ * Should they have a list of events?
+ */
 package pubsub;
 
 public class Topic{

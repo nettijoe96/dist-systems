@@ -1,3 +1,7 @@
+/*
+ * Keeps a client connection open and listens for any messages
+ * Messages are then invoked using the broker listener class
+ */
 package pubsub;
 
 import java.net.*;
@@ -21,6 +25,9 @@ public class ClientHandler implements Runnable{
         }
     }
 
+    /*
+     * Called when a packet is gotten
+     */
     private Packet invokeBroker( Packet packet ){
         return this.listener.invoke( packet );
     }
@@ -28,8 +35,11 @@ public class ClientHandler implements Runnable{
     public void run(){
         while(true){
             try{
+                // Get the packet
                 Packet packet = (Packet) this.in.readObject();
+                // Process the packet and get some ACK
                 packet = invokeBroker( packet );
+                // Send the ACK packet back
                 this.out.writeObject( packet );    
             }catch( Exception e ){
                 e.printStackTrace();

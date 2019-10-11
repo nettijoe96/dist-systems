@@ -1,3 +1,7 @@
+/*
+ * ACK for connect packet
+ */
+
 package pubsub;
 
 public class ConnackPacket extends Packet{

@@ -20,11 +20,14 @@ public class ClientInit implements Runnable{
 
     public void run(){
         try{
+            // Get the first packet (Should be a connect packet)
             ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
             Packet packet = (Packet) in.readObject();
-            if( packet.getPacketType().equals(CONNECT) ){
+            if( packet.getPacketType().equals(CONNECT) ){ // Check that it's connect
                 ConnectPacket connectPacket = (ConnectPacket) packet;
+                // Get your connack after processing the connect packet
                 ConnackPacket connackPacket = (ConnackPacket) listener.invoke( connectPacket );
+                // Start the persistent client handler thread
                 ClientHandler clientHandler = new ClientHandler( this.socket, this.listener, connackPacket );
                 Thread clientHandlerThread = new Thread( clientHandler );
                 clientHandlerThread.start();
