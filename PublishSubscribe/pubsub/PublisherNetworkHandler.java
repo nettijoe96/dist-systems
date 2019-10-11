@@ -4,7 +4,7 @@ public class PublisherNetworkHandler implements Runnable{
 
     static final int PORT = 60666;
 
-    public class PublisherNetworkHandler{
+    public PublisherNetworkHandler(){
 
     }
 
