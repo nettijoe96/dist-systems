@@ -4,8 +4,10 @@
  */
 package pubsub;
 
-import java.net.*;
-import java.io.*;
+import java.net.Socket;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class ClientHandler implements Runnable{
     private Socket socket;
@@ -13,15 +15,16 @@ public class ClientHandler implements Runnable{
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
-    public ClientHandler( Socket socket, BrokerListener listener, ConnackPacket connackPacket ){
+    public ClientHandler( Socket socket, BrokerListener listener, ConnackPacket connackPacket ) throws IOException {
         try{
             this.socket = socket;
             this.listener = listener;
             this.out = new ObjectOutputStream( socket.getOutputStream() );
             this.in = new ObjectInputStream( socket.getInputStream() );
             this.out.writeObject( connackPacket );
-        }catch( Exception e ){
-            e.printStackTrace();
+        }
+        catch( IOException e ){
+            throw e;
         }
     }
 

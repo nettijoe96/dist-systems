@@ -2,16 +2,8 @@ package pubsub;
 
 public class ConnectPacket extends Packet{
 
-    static final String CONNECT = "connect";
-
-    private String connectionType;
-
-    public ConnectPacket( String connectionType ){
-        super( CONNECT );
-        this.connectionType = connectionType;
+    public ConnectPacket(String ptype, int UUID) {
+        super(ptype, UUID);
     }
 
-    public String getConnectionType(){
-        return this.connectionType;
-    }
 }

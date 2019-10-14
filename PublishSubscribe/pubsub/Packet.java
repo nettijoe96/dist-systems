@@ -7,15 +7,16 @@ import java.text.DateFormat;
 import java.io.*;
 
 public class Packet implements Serializable{
-    private String deviceUUID;
+    private int deviceUUID;
     private String packetUUID;
     private String packetType;
 
-    public Packet( String packetType ){
+    public Packet( String packetType){
+        Globals globals = new Globals();
         // InetAddress ip = InetAddress.getLocalHost();
         // NetworkInterface net = NetworkInterface.getByInetAddress(ip);
         // this.deviceUUID = net.getHardwareAddress().toString();
-        this.deviceUUID = "000";
+        this.deviceUUID = globals.initDeviceUUID;
 
         // DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         // Calendar calendar = Calendar.getInstance();
@@ -25,18 +26,15 @@ public class Packet implements Serializable{
         this.packetType = packetType;
     }
     
-    public Packet( String packetType, String packetUUID ){
-        // InetAddress ip = InetAddress.getLocalHost();
-        // NetworkInterface net = NetworkInterface.getByInetAddress(ip);
-        // this.deviceUUID = (String) net.getHardwareAddress();   
-        this.deviceUUID = "000";
-        
-        this.packetUUID = packetUUID;
+    public Packet( String packetType, int deviceUUID ){
 
+        Globals globals = new Globals();
+        this.deviceUUID = deviceUUID; 
         this.packetType = packetType;
     }
 
-    final String getDeviceUUID(){
+
+    final int getDeviceUUID(){
         return this.deviceUUID;
     }
 
