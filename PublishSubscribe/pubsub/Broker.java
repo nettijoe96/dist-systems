@@ -9,8 +9,7 @@ package pubsub;
 
 public class Broker{
 	
-    // The pubsub port
-    static final int PORT = 60666;
+
     // How long to hold events
     static final int TIME_TO_HOLD = 10000;
 
@@ -19,16 +18,17 @@ public class Broker{
 	 */
 	private void startService() {
         // Start a service that handles the connecting of new nodes to the network
-        BrokerListener listener = new BrokerListener( PORT );
-        Thread listenerThread = new Thread( listener );
-        listenerThread.start();
-        System.out.println("Broker Listener Started");
+            Globals globals = new Globals();
+            BrokerListener listener = new BrokerListener( globals.SERVER_PORT );
+            Thread listenerThread = new Thread( listener );
+            listenerThread.start();
+            System.out.println("Broker Listener Started");
 
         // Start a thread that will listen for CLI input
-        BrokerCLI cli = new BrokerCLI();
-        Thread cliThread = new Thread( cli );
-        cliThread.start();
-        System.out.println("Broker CLI Started");
+            BrokerCLI cli = new BrokerCLI();
+            Thread cliThread = new Thread( cli );
+            cliThread.start();
+            System.out.println("Broker CLI Started");
 		
 	}
 
@@ -69,7 +69,7 @@ public class Broker{
 	
 	
 	public static void main(String[] args) {
-        Broker broker = new Broker();
-        broker.startService();
+            Broker broker = new Broker();
+            broker.startService();
 	}
 }

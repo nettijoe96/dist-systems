@@ -56,7 +56,7 @@ public class BrokerListener implements Runnable{
     private void addClient( Socket socket ){
         ClientInit init = new ClientInit( socket, this );
         Thread initThread = new Thread(init);
-        init.start();
+        initThread.start();
     }
 
     /*
