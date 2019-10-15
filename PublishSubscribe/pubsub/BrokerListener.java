@@ -20,7 +20,7 @@ public class BrokerListener implements Runnable{
 
     // Data structures that must be kept track of
     private Globals globals;
-    private Broker broker;
+    public Broker broker;
     private ServerSocket serverSocket;    
 
     public BrokerListener(Broker broker) throws UnknownHostException, IOException {
@@ -36,61 +36,18 @@ public class BrokerListener implements Runnable{
         }
         catch( IOException e ){
             throw e;
-        }
-
-        System.out.println("Server socket opened");
-
-    }
-
-/*
-     * Starts a service that will handle adding the client to either subList or pubList
-     * Used to avoid waiting too long on one client to send connect packet
-     * allows for multiple clients to connect in quick succession even if one misbehaves
-*/
-    private void addClient( Socket socket ){
-        ClientInit init = new ClientInit( socket, this );
-        Thread initThread = new Thread(init);
-        initThread.start();
+        } System.out.println("Server socket opened"); 
     }
 
 
-    /*
-     * Processes generic connect packets,
-     */
-    private ConnackPacket invokeConnect( ConnectPacket connectPacket ){ 
-        if( connectPacket.getDeviceUUID() == this.globals.initDeviceUUID) {
-            //here we have a brand new client. We need to give it a uuid.
-            int clientUUID = this.broker.getNewUUID();
-            return new ConnackPacket( connectPacket, clientUUID );
-            
-        }
-        else {
-            return new ConnackPacket( connectPacket, connectPacket.getDeviceUUID() );
-            
-        }
 
-    } 
 
-    /*
-     * Generic packet handling function
-     * Calls specific methods depending on packet type
-     */
-    public Packet invoke( Packet packet ){
-        System.out.println("Packet invoked");
-        // Connect Packet
-        if( packet.getPacketType().equals( this.globals.CONNECT ) ){
-            return invokeConnect( (ConnectPacket) packet );
-        }
-
-        // Add methods for all types of packets
-        // TODO: Publish
-        // TODO: Subscribe
-        // TODO: Advertise
-        // TODO: Notify
-        
-        // Shouldn't return a null packet? Always an ACK for QoS 1?
-        return null;
+    private void handleSocket( Socket socket ){
+        ClientHandler handler = new ClientHandler( socket, this );
+        Thread handlerThread = new Thread(handler);
+        handlerThread.start();
     }
+
 
 
     public void run(){
@@ -104,9 +61,9 @@ public class BrokerListener implements Runnable{
                 socket = this.serverSocket.accept();
                 System.out.println("New client connected!");
 
-                addClient( socket );
+                handleSocket( socket );
                 System.out.println("after addClient");
-                
+                                
             }catch( Exception e ){
                 e.printStackTrace();
             }

@@ -7,32 +7,31 @@
 package pubsub;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.Semaphore;
-import java.net.*;
-import java.util.*;
+import java.net.Socket;
 import java.io.IOException;
 import java.net.UnknownHostException;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Broker{
 	
 
     // How long to hold events
     static final int TIME_TO_HOLD = 10000;
-    public SubList subList;
-    public PubList pubList;
+
     public ArrayList<Topic> topics = new ArrayList<>();
     public Semaphore topicsMutex = new Semaphore(1);
     public ArrayList<Event> events = new ArrayList<>();
     public Semaphore eventsMutex = new Semaphore(1);
-    private int nextUUID;
+    public ArrayList<ClientData> clients = new ArrayList<>();
+    public HashMap<Integer, ClientData> clientMap = new HashMap<Integer, ClientData>();
+    private int nextid;
     private Globals globals;
 
     
     public Broker() {
-        this.subList = new SubList();
-        this.pubList = new PubList();
         this.globals = new Globals();
-        this.nextUUID = this.globals.initDeviceUUID;
+        this.nextid = this.globals.initDeviceId + 1;
     } 
 
     /*
@@ -49,7 +48,7 @@ public class Broker{
 
             // Start a thread that will listen for CLI input
             BrokerCLI cli = new BrokerCLI(this);
-            Thread cliThread = new Thread( cli);
+            Thread cliThread = new Thread(cli);
             cliThread.start();
             System.out.println("Broker CLI Started");
         } catch( UnknownHostException e ){
@@ -58,18 +57,34 @@ public class Broker{
         catch( IOException e ){
             throw e;
         }
-
-
     }
 
 
-    public int getNewUUID() {
+
+    public ClientData getClient(int id) throws IllegalArgumentException {
+    
+        ClientData client = clientMap.get((Integer) id);
+        if(client == null) {
+            throw new IllegalArgumentException("invalid client id");
+        }
+        return client;
+
+    }
+
+   
+    public void addClient(ClientData client) {
+ 
+        clientMap.put((Integer)client.id, client); 
+    } 
+
+
+    public int getNewId() {
         ReentrantLock lock = new ReentrantLock();
-        lock.lock(); //we need to lock so that each client has a different UUID (stop race condition)
-        int UUID = this.nextUUID;
-        this.nextUUID++;
+        lock.lock(); //we need to lock so that each client has a different id (stop race condition)
+        int id = this.nextid;
+        this.nextid++;
         lock.unlock();
-        return UUID; 
+        return id; 
     }
 
     /*

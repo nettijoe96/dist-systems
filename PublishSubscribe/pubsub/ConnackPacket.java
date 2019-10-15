@@ -8,11 +8,11 @@ public class ConnackPacket extends Packet{
 
     static final String CONNACK = "connack";
     
-    public int clientUUID;   
+    public int clientId;   
 
-    public ConnackPacket( ConnectPacket connectPacket, int UUID){
+    public ConnackPacket( ConnectPacket connectPacket, int id){
         super( CONNACK );
-        this.clientUUID = UUID; 
+        this.clientId = id; 
     }
 
 

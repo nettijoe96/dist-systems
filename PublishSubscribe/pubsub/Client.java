@@ -16,19 +16,19 @@ import java.lang.ClassNotFoundException;
 public class Client {
 
 
-    private int deviceUUID; 
+    private int id; 
     private Globals globals;
   
 
     public Client() {
        this.globals = new Globals();        
-       this.deviceUUID = globals.initDeviceUUID;
+       this.id = globals.initDeviceId;
     }
 
 
-    public Client(int deviceUUID) {
+    public Client(int id) {
        this.globals = new Globals();        
-       this.deviceUUID = deviceUUID;
+       this.id = id;
     }
 
 
@@ -37,12 +37,12 @@ public class Client {
        //connect to server
        try {
            Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
-           ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceUUID);       
+           ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
            out.writeObject(connpacket);
            ConnackPacket connack = (ConnackPacket) in.readObject();
-           this.deviceUUID = connack.clientUUID;
+           this.id = connack.clientId;
            System.out.println("recieved connack");
        }
        catch (UnknownHostException e) {
@@ -105,7 +105,7 @@ public class Client {
 
 
     public static void main(String[] args) {
-        Client client = new Client();     //TODO: allow for cmd args or file processing to determine if client already has a deviceUUID from being run before. If so, use Client(deviceUUId) constructor
+        Client client = new Client();     //TODO: allow for cmd args or file processing to determine if client already has a deviceId from being run before. If so, use Client(deviceUUId) constructor
         try {
             client.initialConnect();        
 //        client.startCLI();  
