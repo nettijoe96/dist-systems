@@ -35,4 +35,11 @@ class ClientData {
     public Packet getPackToSend(Packet packet) {
         return packet; 
     }
+
+
+    public void addSubscription( Topic topic ){
+        if( !subscriptions.contains( topic ) ){
+            subscriptions.add( topic );
+        }
+    }
 }

@@ -28,29 +28,29 @@ public class ClientHandler implements Runnable{
             ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
             Packet packet = (Packet) in.readObject();
             Packet response;
-            ClientData client;
+            ClientData clientData;
             try {
-                client = getOrMakeClient(packet.getDeviceId());  //get client
+                clientData = getOrMakeClient(packet.getDeviceId());  //get client
             }
             catch(IllegalArgumentException e) {
                 response = (Packet) new ExceptionPacket("id not in brokers uuid list and not globals.initDeviceId");
                 out.writeObject(response);
                 return;
             }
-            client.updateClientWithNewSocket(socket);                         // update client data
+            clientData.updateClientWithNewSocket(socket);                         // update client data
 
             if( packet.getPacketType().equals(this.globals.CONNECT) ){        // connect
                 ConnectPacket connectPacket = (ConnectPacket) packet;
                 // Get your connack after processing the connect packet
-                response = (Packet) invokeConnect((ConnectPacket) packet, client);
+                response = (Packet) invokeConnect((ConnectPacket) packet, clientData);
                 out.writeObject( response );    
                 
             } else if( packet.getPacketType().equals(this.globals.SUBSCRIBE) ){   // subscribe
-                //TODO: make an invokeSubscribe func
+                this.invokeSubscribe( (SubscribePacket) packet, clientData );
             } else if( packet.getPacketType().equals(this.globals.UNSUBSCRIBE) ){  // unsubscribe
-                //TODO: make an invokeUnsubscribe func
+                this.invokeUnsubscribe( (UnsubscribePacket) packet, clientData);
             } else if( packet.getPacketType().equals(this.globals.PUBLISH) ){  // publish 
-                //TODO: make an invokePublish func
+                this.invokePublish( (PublishPacket) packet, clientData );
             }
             
         } catch(IOException e){
@@ -93,6 +93,32 @@ public class ClientHandler implements Runnable{
         }
 
     }
+
+    private Packet invokeSubscribe( SubscribePacket subscribePacket, ClientData clientData ){
+        String topicName = subscribePacket.getTopic().getTopic();
+        // Check with listener if this is a valid topic
+        if( listener.isTopicInList( topicName ) ) {
+            Topic topic = listener.getTopicByName( topicName );
+            clientData.addSubscription( topic );
+        }
+
+        // Right now there is no failure suback
+        // TODO differentiate between a successful suback and a failure
+        SubackPacket subackPacket = new SubackPacket();
+        return subackPacket;
+    }
+
+    private Packet invokeUnsubscribe( UnsubscribePacket unsubscribePacket, ClientData clientData ){
+
+        return null;
+    }
+
+    private Packet invokePublish( PublishPacket publishPacket, ClientData clientData ){
+        return null;
+
+    }
+
+
 
     /*
      * connect

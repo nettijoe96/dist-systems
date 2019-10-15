@@ -48,6 +48,44 @@ public class BrokerListener implements Runnable{
         handlerThread.start();
     }
 
+    protected boolean isTopicInList( String topicName ){
+        try{
+            this.broker.topicsMutex.acquire();
+
+            for( Topic topic : this.broker.topics ){
+               if( topic.getTopic().equals( topicName ) ){
+                   this.broker.topicsMutex.release();
+                   return true;
+               }
+            }
+
+            this.broker.topicsMutex.release();
+        }catch( InterruptedException e ){
+            System.out.println("Interupted Exception");
+            e.printStackTrace();
+        }
+        
+        return false;
+    }
+
+    protected Topic getTopicByName( String topicName ){
+        try{
+            this.broker.topicsMutex.acquire();
+
+            for( Topic topic : this.broker.topics ){
+                if( topic.getTopic().equals( topicName ) ){
+                    this.broker.topicsMutex.release();
+                    return topic;
+                }
+            }
+            this.broker.topicsMutex.release();
+        }catch( InterruptedException e ){
+            System.out.println("Interupted Exception");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 
     public void run(){
