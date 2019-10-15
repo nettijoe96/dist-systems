@@ -33,24 +33,28 @@ public class ClientHandler implements Runnable{
                 client = getOrMakeClient(packet.getDeviceId());  //get client
             }
             catch(IllegalArgumentException e) {
-                response = (Packet) new ExceptionPacket("uuid not in brokers uuid list and not initId");
+                response = (Packet) new ExceptionPacket("id not in brokers uuid list and not globals.initDeviceId");
                 out.writeObject(response);
                 return;
             }
-            client.updateClientWithNewSocket(socket);                         //update client data
+            client.updateClientWithNewSocket(socket);                         // update client data
 
-            if( packet.getPacketType().equals(this.globals.CONNECT) ){        //CONNECT
+            if( packet.getPacketType().equals(this.globals.CONNECT) ){        // connect
                 ConnectPacket connectPacket = (ConnectPacket) packet;
                 // Get your connack after processing the connect packet
                 response = (Packet) invokeConnect((ConnectPacket) packet, client);
                 out.writeObject( response );    
                 
             }
-            System.out.print("id: ");
-            System.out.print(this.listener.broker.clientMap);
-            //System.out.println(this.listener.broker.clientMap.get((Integer)1).id);
-            //TODO: call invoke for subscribe, publish
-
+            else if( packet.getPacketType().equals(this.globals.SUBSCRIBE) ){   // subscribe
+                //TODO: make an invokeSubscribe func
+            }
+            else if( packet.getPacketType().equals(this.globals.UNSUBSCRIBE) ){  // unsubscribe
+                //TODO: make an invokeUnsubscribe func
+            
+            else if( packet.getPacketType().equals(this.globals.PUBLISH) ){  // publish 
+                //TODO: make an invokePublish func
+            }
             
         } catch(IOException e){
             e.printStackTrace();
@@ -61,6 +65,15 @@ public class ClientHandler implements Runnable{
     }
 
 
+    /*
+    * getOrMakeClient
+
+    * checks if client of id exists. 
+    * If id is init, make new one. 
+    * If not init and doesn't exist, it errors
+    @param id 
+    @return clientData
+    */
     private ClientData getOrMakeClient(int id) throws IllegalArgumentException {
         if( id == this.globals.initDeviceId ) {
             //here we have a brand new client. We need to give it a uuid.

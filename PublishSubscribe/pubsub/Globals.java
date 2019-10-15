@@ -10,9 +10,10 @@ public class Globals {
     static final int serverConnectionBacklog = 100;
 
     // Constants denoting certain types
-    static final String CONNECT = "connect";
-    static final String PUBLISHER = "publisher";
-    static final String SUBSCRIBER = "subscriber";
+    static final String CONNECT = "CONNECT";
+    static final String PUBLISH = "PUBLISH";
+    static final String SUBSCRIBE = "SUBSCRIBE";
+    static final String UNSUBSCRIBE = "UNSUBSCRIBE";
 
 
 }

@@ -46,7 +46,7 @@ public class Broker{
             listenerThread.start();
             System.out.println("Broker Listener Started");
 
-            // Start a thread that will listen for CLI input
+            // Start a thread that will listen for CLI input  //TODO
             BrokerCLI cli = new BrokerCLI(this);
             Thread cliThread = new Thread(cli);
             cliThread.start();
@@ -60,7 +60,13 @@ public class Broker{
     }
 
 
+    /*
+    getClient
 
+    gets client from clientMap
+    @param id
+    @return clientData
+    */
     public ClientData getClient(int id) throws IllegalArgumentException {
     
         ClientData client = clientMap.get((Integer) id);
@@ -72,12 +78,23 @@ public class Broker{
     }
 
    
+    /*
+    addClient
+
+    adds new client to clientMap and clients ArrayList
+    @param client clientData
+    */
     public void addClient(ClientData client) {
  
         clientMap.put((Integer)client.id, client); 
+        clients.add(client);
     } 
 
+    /*
+    getNewId
 
+    get new id for a new client
+    */
     public int getNewId() {
         ReentrantLock lock = new ReentrantLock();
         lock.lock(); //we need to lock so that each client has a different id (stop race condition)
@@ -87,41 +104,6 @@ public class Broker{
         return id; 
     }
 
-    /*
-    * notify all subscribers of new event 
-    */
-    private void notifySubscribers() {
-		
-    }
-	
-    /*
-    * add new topic when received advertisement of new topic
-    */
-    private void addTopic(){
-		
-    }
-	
-    /*
-    * add subscriber to the internal list
-    */
-    private void addSubscriber(){
-		
-    }
-	
-    /*
-    * remove subscriber from the list
-    */
-    private void removeSubscriber(){
-		
-    }
-	
-    /*
-     * show the list of subscriber for a specified topic
-     */
-    private void showSubscribers(){
-		
-    }
-	
 	
     public static void main(String[] args) {
         try {
