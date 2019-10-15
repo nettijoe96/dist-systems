@@ -59,6 +59,14 @@ public class Broker{
         }
     }
 
+    /*
+     * Exit the service
+     */
+    protected void exitService(){
+        // This should be handled better but it will work for now?
+        System.out.println("Broker service stopping");
+        System.exit(0);
+    }
 
     /*
     getClient

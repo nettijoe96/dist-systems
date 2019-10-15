@@ -8,9 +8,11 @@ import java.util.Scanner;
 
 public class BrokerCLI implements Runnable{
 
-    Broker broker;  
+    private Broker broker;  
+    private Globals globals;
 
     public BrokerCLI(Broker broker) {
+        this.globals = new Globals();
         this.broker = broker; 
     }
 
@@ -20,6 +22,10 @@ public class BrokerCLI implements Runnable{
             System.out.print("> ");
             
             String userInput = scanner.next();
+            if( userInput.equals( globals.EXITLINE ) ){
+                this.broker.exitService();
+                break;
+            }
         }
     }
 }

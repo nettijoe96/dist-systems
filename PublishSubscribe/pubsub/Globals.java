@@ -15,5 +15,8 @@ public class Globals {
     static final String SUBSCRIBE = "SUBSCRIBE";
     static final String UNSUBSCRIBE = "UNSUBSCRIBE";
 
+    // CLI input to exit
+    static final String EXITLINE = "exit()";
+
 
 }
