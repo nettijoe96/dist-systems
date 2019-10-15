@@ -45,14 +45,11 @@ public class ClientHandler implements Runnable{
                 response = (Packet) invokeConnect((ConnectPacket) packet, client);
                 out.writeObject( response );    
                 
-            }
-            else if( packet.getPacketType().equals(this.globals.SUBSCRIBE) ){   // subscribe
+            } else if( packet.getPacketType().equals(this.globals.SUBSCRIBE) ){   // subscribe
                 //TODO: make an invokeSubscribe func
-            }
-            else if( packet.getPacketType().equals(this.globals.UNSUBSCRIBE) ){  // unsubscribe
+            } else if( packet.getPacketType().equals(this.globals.UNSUBSCRIBE) ){  // unsubscribe
                 //TODO: make an invokeUnsubscribe func
-            
-            else if( packet.getPacketType().equals(this.globals.PUBLISH) ){  // publish 
+            } else if( packet.getPacketType().equals(this.globals.PUBLISH) ){  // publish 
                 //TODO: make an invokePublish func
             }
             
