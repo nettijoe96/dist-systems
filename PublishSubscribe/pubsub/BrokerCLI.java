@@ -7,6 +7,12 @@ package pubsub;
 
 public class BrokerCLI implements Runnable{
 
+    Broker broker;  
+
+    public BrokerCLI(Broker broker) {
+        this.broker = broker; 
+    }
+
     public void run(){
     }
 }
