@@ -7,6 +7,7 @@ package pubsub;
 
 public class Topic{
     private String topic;
+    private String description;
 
     public Topic( String topic ){
         this.topic = topic;
@@ -14,7 +15,7 @@ public class Topic{
 
     @Override
     public String toString(){
-        return this.topic;
+        return this.topic +"\n\t"+ this.description;
     }
 
     @Override
@@ -31,6 +32,13 @@ public class Topic{
         Topic t = (Topic) o;
 
         return this.topic.equals( t.topic );
+    }
+    public String getTopic(){
+        return this.topic;
+    }
+
+    public String getDescription(){
+        return this.description;
     }
 }
 
