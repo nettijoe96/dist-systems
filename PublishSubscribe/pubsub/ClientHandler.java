@@ -9,7 +9,6 @@ import java.lang.ClassNotFoundException;
 
 public class ClientHandler implements Runnable{
 
-
     private Socket socket;
     private BrokerListener listener;
     private Globals globals;    
@@ -51,6 +50,9 @@ public class ClientHandler implements Runnable{
                 this.invokeUnsubscribe( (UnsubscribePacket) packet, clientData);
             } else if( packet.getPacketType().equals(this.globals.PUBLISH) ){  // publish 
                 this.invokePublish( (PublishPacket) packet, clientData );
+            }
+            else if( packet.getPacketType().equals(this.globals.ADVERTISE) ){  // advertise
+                invokeAdvertise((AdvertisePacket) packet);
             }
             
         } catch(IOException e){
@@ -118,6 +120,26 @@ public class ClientHandler implements Runnable{
 
     }
 
+
+
+    /*
+    * advertise
+    */ 
+    private void invokeAdvertise ( AdvertisePacket packet ) {
+        Topic topic = packet.topic;
+        this.listener.broker.addTopic(topic);  
+        
+        //extract topic 
+    }
+
+
+    /*
+    * publish
+    */ 
+    private void invokePublish( PublishPacket packet, ClientData client ) {
+        
+        //extract 
+    }
 
 
     /*

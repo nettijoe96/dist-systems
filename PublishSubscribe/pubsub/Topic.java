@@ -33,6 +33,7 @@ public class Topic{
 
         return this.topic.equals( t.topic );
     }
+
     public String getTopic(){
         return this.topic;
     }

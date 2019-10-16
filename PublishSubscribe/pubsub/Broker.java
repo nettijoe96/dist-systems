@@ -24,6 +24,8 @@ public class Broker{
     public ArrayList<Event> events = new ArrayList<>();
     public Semaphore eventsMutex = new Semaphore(1);
     public ArrayList<ClientData> clients = new ArrayList<>();
+    public HashMap<Topic, Event> TopicEvents = new HashMap<Topic, Event>();
+    public HashMap<String, ClientData> Subscriptions = new HashMap<String, ClientData>();
     public HashMap<Integer, ClientData> clientMap = new HashMap<Integer, ClientData>();
     private int nextid;
     private Globals globals;
@@ -111,6 +113,65 @@ public class Broker{
         lock.unlock();
         return id; 
     }
+
+
+    /*
+    addEvent
+
+    adds new topic to topics ArrayList
+    @param topic
+    */
+    public void addEvent(Event event) {
+        Topic topic = event.topic;
+        if (topicExists(topic)) {
+            topicEvents.put(topic, topicEvents.get(topic).add(event));  //add event to list of events
+            ArrayList<ClientData> subscribers = subscriptions.get(topic);
+            for(int i = 0; i < subscribers.length; i++) {
+                ClientData client = subscribers.get(i);
+                client.eventQueue.push(event);
+            }
+        }
+         
+    } 
+
+    /*
+    topicExists
+   
+    check if a topic exists
+
+    */
+    public boolean topicExists(Topic topic) {
+        for(int i = 0; i < topics.length; i++) {
+            if (topic.equals(topics.get(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+    addTopic
+
+    adds new topic to topics ArrayList
+    @param topic
+    */
+    public void addTopic(Topic topic) {
+        topics.add(topic);
+        for(int i = 0; i < clients.length; i++) {
+            clients.get(i).topicAdvertiseQueue.push(topic);
+        }
+    } 
+
+
+
+/*
+    /*
+    sendToSubscribers
+    
+    
+    public void sendTopi
+*/
+
 
 	
     public static void main(String[] args) {
