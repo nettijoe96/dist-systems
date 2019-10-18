@@ -24,8 +24,8 @@ public class Broker{
     public ArrayList<Event> events = new ArrayList<>();
     public Semaphore eventsMutex = new Semaphore(1);
     public ArrayList<ClientData> clients = new ArrayList<>();
-    public HashMap<Topic, Event> TopicEvents = new HashMap<Topic, Event>();
-    public HashMap<String, ClientData> Subscriptions = new HashMap<String, ClientData>();
+    public HashMap<Topic, ArrayList<Event>> topicEvents = new HashMap<Topic, ArrayList<Event>>();
+    public HashMap<String, ArrayList<ClientData>> subscriptions = new HashMap<String, ArrayList<ClientData>>();
     public HashMap<Integer, ClientData> clientMap = new HashMap<Integer, ClientData>();
     private int nextid;
     private Globals globals;
@@ -124,11 +124,11 @@ public class Broker{
     public void addEvent(Event event) {
         Topic topic = event.topic;
         if (topicExists(topic)) {
-            topicEvents.put(topic, topicEvents.get(topic).add(event));  //add event to list of events
+            this.topicEvents.get(topic).add(event);  //add event to list of events
             ArrayList<ClientData> subscribers = subscriptions.get(topic);
-            for(int i = 0; i < subscribers.length; i++) {
+            for(int i = 0; i < subscribers.size(); i++) {
                 ClientData client = subscribers.get(i);
-                client.eventQueue.push(event);
+                client.eventQueue.add(event);
             }
         }
          
@@ -141,13 +141,14 @@ public class Broker{
 
     */
     public boolean topicExists(Topic topic) {
-        for(int i = 0; i < topics.length; i++) {
-            if (topic.equals(topics.get(i))) {
+        for(int i = 0; i < this.topics.size(); i++) {
+            if (topic.equals(this.topics.get(i))) {
                 return true;
             }
         }
         return false;
     }
+
 
     /*
     addTopic
@@ -157,8 +158,10 @@ public class Broker{
     */
     public void addTopic(Topic topic) {
         topics.add(topic);
-        for(int i = 0; i < clients.length; i++) {
-            clients.get(i).topicAdvertiseQueue.push(topic);
+        if (!topicExists(topic)) {  //only add topic if it doesn't already exist
+            for(int i = 0; i < clients.size(); i++) {
+                clients.get(i).topicAdvertiseQueue.add(topic);
+            }
         }
     } 
 

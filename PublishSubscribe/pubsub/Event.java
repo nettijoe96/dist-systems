@@ -3,7 +3,7 @@ package pubsub;
 
 
 public class Event{
-    private Topic topic;
-    private String payload;
+    public Topic topic;
+    public String payload;
 }
 

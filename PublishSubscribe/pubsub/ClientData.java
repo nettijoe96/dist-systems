@@ -20,7 +20,6 @@ class ClientData {
 
     ClientData(int id, Socket socket) {
         this.subscriptions = new ArrayList<Topic>();
-        this.missedEvents = new ArrayList<Event>();
         this.clientMutex = new Semaphore(1);
         this.id = id;
         updateClientWithNewSocket(socket); 
@@ -49,8 +48,13 @@ class ClientData {
         }
     }
 
-    public void lockClient() {
-        clientMutex.acquire();
+    public void lockClient() throws InterruptedException {
+        try {
+            clientMutex.acquire();
+        }
+        catch (InterruptedException e) {
+            throw e;
+        }
     }
 
     public void unlockClient() {
@@ -61,10 +65,10 @@ class ClientData {
     public boolean checkAccess() {
 
         if(clientMutex.availablePermits() == 1) {
-            return true
+            return true;
         }
         else {
-            return false
+            return false;
         }
     }
 

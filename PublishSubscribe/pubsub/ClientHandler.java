@@ -45,11 +45,11 @@ public class ClientHandler implements Runnable{
                 out.writeObject( response );    
                 
             } else if( packet.getPacketType().equals(this.globals.SUBSCRIBE) ){   // subscribe
-                this.invokeSubscribe( (SubscribePacket) packet, clientData );
+                invokeSubscribe( (SubscribePacket) packet, clientData );
             } else if( packet.getPacketType().equals(this.globals.UNSUBSCRIBE) ){  // unsubscribe
-                this.invokeUnsubscribe( (UnsubscribePacket) packet, clientData);
+                invokeUnsubscribe( (UnsubscribePacket) packet, clientData);
             } else if( packet.getPacketType().equals(this.globals.PUBLISH) ){  // publish 
-                this.invokePublish( (PublishPacket) packet, clientData );
+                invokePublish( (PublishPacket) packet, clientData );
             }
             else if( packet.getPacketType().equals(this.globals.ADVERTISE) ){  // advertise
                 invokeAdvertise((AdvertisePacket) packet);
@@ -90,7 +90,6 @@ public class ClientHandler implements Runnable{
                 //if we cannot find a client for a uuid, there is likely a client-side error
                 throw e;
             }
-
             
         }
 
@@ -109,6 +108,8 @@ public class ClientHandler implements Runnable{
         SubackPacket subackPacket = new SubackPacket();
         return subackPacket;
     }
+
+
 
     private Packet invokeUnsubscribe( UnsubscribePacket unsubscribePacket, ClientData clientData ){
 
@@ -132,14 +133,6 @@ public class ClientHandler implements Runnable{
         //extract topic 
     }
 
-
-    /*
-    * publish
-    */ 
-    private void invokePublish( PublishPacket packet, ClientData client ) {
-        
-        //extract 
-    }
 
 
     /*
