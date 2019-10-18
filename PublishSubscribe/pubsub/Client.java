@@ -44,15 +44,16 @@ public class Client {
            // Socket socket = new Socket( this.globals.BROKER_IP, 60666);
            // But this does work...
            Socket socket = new Socket("172.17.0.1", this.globals.BROKER_PORT);
-           System.out.println("Broker IP: " + this.globals.BROKER_IP);
-           System.out.println("Broker Port: " + this.globals.BROKER_PORT);
-           ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
+
            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+           ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
            out.writeObject(connpacket);
+           System.out.println("Establishing connection");
            ConnackPacket connack = (ConnackPacket) in.readObject();
            this.id = connack.clientId;
-           System.out.println("recieved connack");
+           System.out.println("recieved connack, connection established");
        }
        catch (UnknownHostException e) {
            throw e; 
