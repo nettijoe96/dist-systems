@@ -4,7 +4,7 @@ import java.net.NetworkInterface;
 import java.net.InetAddress;
 import java.util.Calendar;
 import java.text.DateFormat;
-import java.io.*;
+import java.io.Serializable;
 
 public class Packet implements Serializable{
     private int deviceId;

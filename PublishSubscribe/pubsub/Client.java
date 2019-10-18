@@ -77,22 +77,16 @@ public class Client {
     }
 
 
-    public void listen() {
+
+    private class Heartbeat extends Thread {
     
-        ClientListener listener = new ClientListener();
-        listener.start(); 
+        public void run() {
+
+        } 
+        
 
     }
 
-
-    private class ClientListener extends Thread {
-
-       public void run() {
-           
-
-       } 
-
-    }
 
 
     /*

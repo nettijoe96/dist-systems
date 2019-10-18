@@ -53,7 +53,7 @@ public class BrokerListener implements Runnable{
             this.broker.topicsMutex.acquire();
 
             for( Topic topic : this.broker.topics ){
-               if( topic.getTopic().equals( topicName ) ){
+               if( topic.topic == topicName ){
                    this.broker.topicsMutex.release();
                    return true;
                }
@@ -73,7 +73,7 @@ public class BrokerListener implements Runnable{
             this.broker.topicsMutex.acquire();
 
             for( Topic topic : this.broker.topics ){
-                if( topic.getTopic().equals( topicName ) ){
+                if( topic.topic == topicName ) {
                     this.broker.topicsMutex.release();
                     return topic;
                 }

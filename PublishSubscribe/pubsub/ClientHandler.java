@@ -124,7 +124,7 @@ public class ClientHandler implements Runnable{
     }
 
     private void invokeSubscribe( SubscribePacket subscribePacket, ClientData client ) {
-        String topicName = subscribePacket.getTopic().getTopic();
+        String topicName = subscribePacket.getTopic().topic;
         // Check with listener if this is a valid topic
         if( listener.isTopicInList( topicName ) ) {     //TODO: switch to topicExists
             Topic topic = listener.getTopicByName(topicName);
@@ -140,7 +140,7 @@ public class ClientHandler implements Runnable{
 
 
     private void invokeUnsubscribe( UnsubscribePacket unsubscribePacket, ClientData client ) {
-        String topicName = unsubscribePacket.getTopic().getTopic();
+        String topicName = unsubscribePacket.getTopic().topic;
         // Check with listener if this is a valid topic
         if( listener.isTopicInList( topicName ) ) {   //TODO: switch to topicExists 
             Topic topic = listener.getTopicByName(topicName);

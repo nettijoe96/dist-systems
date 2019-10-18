@@ -5,9 +5,11 @@
  */
 package pubsub;
 
-public class Topic{
-    private String topic;
-    private String description;
+import java.io.Serializable;
+
+public class Topic implements Serializable {
+    public String topic;
+    public String description;
 
     public Topic( String topic ){
         this.topic = topic;
