@@ -4,7 +4,7 @@ public class Globals {
 
     static final int BROKER_PORT = 60666;
 //    static final String BROKER_IP = "172.10.0.2";      
-    static final String BROKER_IP = "127.0.0.1";      
+    static final String BROKER_IP = "127.17.0.1";      
     static final int initDeviceId = 0;
 
     static final int serverConnectionBacklog = 100;
