@@ -1,6 +1,6 @@
 *.class
 
-futureUse/
+/pubsub/futureUse/
 r.java
 *.swp
 
