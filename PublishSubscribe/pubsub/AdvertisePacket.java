@@ -8,7 +8,8 @@ package pubsub;
 public class AdvertisePacket extends Packet{
     public Topic topic;
 
-    public AdvertisePacket(){
-        super("advertise");
+    public AdvertisePacket(Topic topic, int id){
+        super("ADVERTISE", id);
+        this.topic = topic;
     }
 }

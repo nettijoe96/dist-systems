@@ -25,7 +25,7 @@ public class Broker{
     public Semaphore eventsMutex = new Semaphore(1);
     public ArrayList<ClientData> clients = new ArrayList<>();
     public HashMap<Topic, ArrayList<Event>> topicEvents = new HashMap<Topic, ArrayList<Event>>();
-    public HashMap<String, ArrayList<ClientData>> subscriptions = new HashMap<String, ArrayList<ClientData>>();
+    public HashMap<Topic, ArrayList<ClientData>> subscriptions = new HashMap<Topic, ArrayList<ClientData>>();
     public HashMap<Integer, ClientData> clientMap = new HashMap<Integer, ClientData>();
     private int nextid;
     private Globals globals;
@@ -98,6 +98,11 @@ public class Broker{
  
         clientMap.put((Integer)client.id, client); 
         clients.add(client);
+         
+        //fill missed ads in new client
+        for(int i = 0; i < topics.size(); i++) {
+            client.missedAds.add(topics.get(i));
+        }
     } 
 
     /*
@@ -125,10 +130,10 @@ public class Broker{
         Topic topic = event.topic;
         if (topicExists(topic)) {
             this.topicEvents.get(topic).add(event);  //add event to list of events
-            ArrayList<ClientData> subscribers = subscriptions.get(topic);
+            ArrayList<ClientData> subscribers = this.subscriptions.get(topic);
             for(int i = 0; i < subscribers.size(); i++) {
                 ClientData client = subscribers.get(i);
-                client.eventQueue.add(event);
+                client.missedEvents.add(event);
             }
         }
          
@@ -157,23 +162,43 @@ public class Broker{
     @param topic
     */
     public void addTopic(Topic topic) {
-        topics.add(topic);
         if (!topicExists(topic)) {  //only add topic if it doesn't already exist
+            topics.add(topic);
+            subscriptions.put(topic, new ArrayList<ClientData>());
             for(int i = 0; i < clients.size(); i++) {
-                clients.get(i).topicAdvertiseQueue.add(topic);
+                clients.get(i).missedAds.add(topic);
             }
         }
     } 
 
 
 
-/*
     /*
-    sendToSubscribers
+    subscribe
     
-    
-    public void sendTopi
-*/
+    */
+    public void subscribe(Topic topic, ClientData client) {
+        if(topicExists(topic)) {
+            ArrayList<ClientData> subscribedClients = subscriptions.get(topic);
+            if(!subscribedClients.contains(client)) {
+                subscribedClients.add(client);
+            }
+        }
+    }
+
+
+    /*
+    * unsubscribe
+
+    */
+    public void unsubscribe(Topic topic, ClientData client) {
+        if(topicExists(topic)) {
+            ArrayList<ClientData> subscribedClients = subscriptions.get(topic);
+            if(subscribedClients.contains(client)) {
+                subscribedClients.remove(client);
+            }
+        }
+    }
 
 
 	

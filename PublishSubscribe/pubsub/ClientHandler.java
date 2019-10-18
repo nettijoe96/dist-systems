@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.lang.ClassNotFoundException;
+import java.util.ArrayList;
 
 public class ClientHandler implements Runnable{
 
@@ -27,41 +28,68 @@ public class ClientHandler implements Runnable{
             ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
             Packet packet = (Packet) in.readObject();
             Packet response;
-            ClientData clientData;
+            ClientData client;
             try {
-                clientData = getOrMakeClient(packet.getDeviceId());  //get client
+                client = getOrMakeClient(packet.getDeviceId());  //get client
             }
             catch(IllegalArgumentException e) {
                 response = (Packet) new ExceptionPacket("id not in brokers uuid list and not globals.initDeviceId");
                 out.writeObject(response);
                 return;
             }
-            clientData.updateClientWithNewSocket(socket);                         // update client data
+            client.updateClientWithNewSocket(socket);                         // update client data
 
             if( packet.getPacketType().equals(this.globals.CONNECT) ){        // connect
                 ConnectPacket connectPacket = (ConnectPacket) packet;
                 // Get your connack after processing the connect packet
-                response = (Packet) invokeConnect((ConnectPacket) packet, clientData);
+                response = (Packet) invokeConnect((ConnectPacket) packet, client);
                 out.writeObject( response );    
                 
             } else if( packet.getPacketType().equals(this.globals.SUBSCRIBE) ){   // subscribe
-                invokeSubscribe( (SubscribePacket) packet, clientData );
+                invokeSubscribe( (SubscribePacket) packet, client );
             } else if( packet.getPacketType().equals(this.globals.UNSUBSCRIBE) ){  // unsubscribe
-                invokeUnsubscribe( (UnsubscribePacket) packet, clientData);
+                invokeUnsubscribe( (UnsubscribePacket) packet, client);
             } else if( packet.getPacketType().equals(this.globals.PUBLISH) ){  // publish 
-                invokePublish( (PublishPacket) packet, clientData );
+                invokePublish( (PublishPacket) packet, client );
             }
             else if( packet.getPacketType().equals(this.globals.ADVERTISE) ){  // advertise
                 invokeAdvertise((AdvertisePacket) packet);
             }
             
+            System.out.println(this.listener.broker.topics);
+            //here we notify of new events and advertisements
+            if (client.nonEmptyOutStream()) {
+                sendNotify(client);
+            }
+
         } catch(IOException e){
             e.printStackTrace();
         } catch(ClassNotFoundException e){
             e.printStackTrace();
         }
  
+
+
+
+
     }
+
+
+
+
+    private NotifyPacket sendNotify(ClientData client) {
+        ArrayList<Event> missedEvents = new ArrayList<Event>();
+        for(int i = 0; i < client.missedEvents.size(); i++) {
+            Event event = client.missedEvents.get(i);
+            Topic topic = event.topic;
+            if(client.isSubscribed(topic)) {
+                missedEvents.add(event); 
+            }
+        }
+        NotifyPacket packet = new NotifyPacket(missedEvents, client.missedAds);
+        return packet;
+    }
+
 
 
     /*
@@ -95,28 +123,34 @@ public class ClientHandler implements Runnable{
 
     }
 
-    private Packet invokeSubscribe( SubscribePacket subscribePacket, ClientData clientData ){
+    private void invokeSubscribe( SubscribePacket subscribePacket, ClientData client ) {
         String topicName = subscribePacket.getTopic().getTopic();
         // Check with listener if this is a valid topic
-        if( listener.isTopicInList( topicName ) ) {
-            Topic topic = listener.getTopicByName( topicName );
-            clientData.addSubscription( topic );
+        if( listener.isTopicInList( topicName ) ) {     //TODO: switch to topicExists
+            Topic topic = listener.getTopicByName(topicName);
+            client.addSubscription(topic);
+            listener.broker.subscribe(topic, client);
         }
 
         // Right now there is no failure suback
         // TODO differentiate between a successful suback and a failure
-        SubackPacket subackPacket = new SubackPacket();
-        return subackPacket;
+        //SubackPacket subackPacket = new SubackPacket();
+        //return subackPacket;
     }
 
 
-
-    private Packet invokeUnsubscribe( UnsubscribePacket unsubscribePacket, ClientData clientData ){
-
-        return null;
+    private void invokeUnsubscribe( UnsubscribePacket unsubscribePacket, ClientData client ) {
+        String topicName = unsubscribePacket.getTopic().getTopic();
+        // Check with listener if this is a valid topic
+        if( listener.isTopicInList( topicName ) ) {   //TODO: switch to topicExists 
+            Topic topic = listener.getTopicByName(topicName);
+            client.removeSubscription(topic);
+            listener.broker.unsubscribe(topic, client);
+        }
     }
 
-    private Packet invokePublish( PublishPacket publishPacket, ClientData clientData ){
+
+    private Packet invokePublish( PublishPacket publishPacket, ClientData clientData ) {
         return null;
 
     }
@@ -129,8 +163,6 @@ public class ClientHandler implements Runnable{
     private void invokeAdvertise ( AdvertisePacket packet ) {
         Topic topic = packet.topic;
         this.listener.broker.addTopic(topic);  
-        
-        //extract topic 
     }
 
 
