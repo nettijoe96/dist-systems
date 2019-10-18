@@ -57,6 +57,24 @@ public class Client {
 
     }
 
+    public void advertise(Topic topic) throws UnknownHostException, IOException, ClassNotFoundException {
+
+       //connect to server
+       try {
+           Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
+           AdvertisePacket packet = new AdvertisePacket(topic, this.id);       
+           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+           ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+           out.writeObject(packet);
+           //ConnackPacket connack = (ConnackPacket) in.readObject(); //change if we want to get anything back
+       }
+       catch (UnknownHostException e) {
+           throw e; 
+       }
+       catch (IOException e) {
+           throw e; 
+       }
+    }
 
 
     public void listen() {
@@ -110,6 +128,11 @@ public class Client {
             client.initialConnect();        
 //        client.startCLI();  
 //        client.listen();    //listens for server to connect to it (server keeps cache of ip addresses)
+
+            //test
+            Topic topic = new Topic("1_topic_1");
+            client.advertise(topic);
+
         }
         catch (UnknownHostException e) {
             System.out.println(e); 
@@ -121,9 +144,6 @@ public class Client {
             System.out.println(e); 
         }
     }
-
-
-
 
 
 }

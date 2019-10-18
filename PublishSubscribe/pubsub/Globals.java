@@ -13,6 +13,7 @@ public class Globals {
     static final String ADVERTISE = "ADVERTISE";
     static final String CONNECT = "CONNECT";
     static final String PUBLISH = "PUBLISH";
+    static final String NOTIFY = "NOTIFY";
     static final String SUBSCRIBE = "SUBSCRIBE";
     static final String UNSUBSCRIBE = "UNSUBSCRIBE";
 
