@@ -9,7 +9,6 @@ public class Globals {
 
     public static final int serverConnectionBacklog = 100;
 
-HEAD
         // Constants denoting certain types
     public static String ADVERTISE = "ADVERTISE";
     public static String CLOSE = "CLOSE";
@@ -28,9 +27,6 @@ HEAD
         EXIT_COMMAND + "\n" +
         LIST_TOPICS_COMMAND + "\n" +
         HELP_COMMAND + "\n";
-
-
-b5a74e4d54e10a865f095f01027b4888c2fd3215
 
 
 }
