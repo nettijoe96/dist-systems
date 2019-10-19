@@ -17,7 +17,6 @@ import java.util.HashMap;
 
 public class Client {
 
-
     private int id; 
     private Globals globals;
     private ArrayList<Topic> ads;  
@@ -44,14 +43,25 @@ public class Client {
 
        //connect to server
        try {
-           Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
-           ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
+           System.out.println("Attempting Connection to Broker");
+           // For some reason explicitly putting the address is the only way to connect???
+           // Socket socket = new Socket("172.17.0.1", 60666); 
+           // This doesn't work
+           // Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
+           // Or this
+           // Socket socket = new Socket( this.globals.BROKER_IP, 60666);
+           // But this does work...
+           Socket socket = new Socket("172.17.0.1", this.globals.BROKER_PORT);
+
            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+           ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
            out.writeObject(connpacket);
+           System.out.println("Establishing connection");
            ConnackPacket connack = (ConnackPacket) in.readObject();
            this.id = connack.clientId;
-           System.out.println("recieved connack");
+           System.out.println("recieved connack, connection established");
        }
        catch (UnknownHostException e) {
            throw e; 
@@ -88,7 +98,9 @@ public class Client {
 
        //connect to server
        try {
+           System.out.println("Attempting connection to Broker");
            Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
+           System.out.println("Connection to Broker successful");
            AdvertisePacket packet = new AdvertisePacket(topic, this.id);       
            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -221,6 +233,7 @@ public class Client {
         Globals globals = new Globals();     
 
         try {
+            System.out.println("Beginning connection initialization");
             client.initialConnect();        
 //        client.startCLI();  
 //        client.listen();    //listens for server to connect to it (server keeps cache of ip addresses)
