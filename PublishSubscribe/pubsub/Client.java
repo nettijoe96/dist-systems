@@ -48,23 +48,18 @@ public class Client {
        try {
            System.out.println("Attempting Connection to Broker");
            // For some reason explicitly putting the address is the only way to connect???
-           // Socket socket = new Socket("172.17.0.1", 60666); 
-           // This doesn't work
-           // Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
-           // Or this
-           // Socket socket = new Socket( this.globals.BROKER_IP, 60666);
-           // But this does work...
            Socket socket = new Socket("172.17.0.1", this.globals.BROKER_PORT);
 
            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
+           // Need to make sure that it accounts for if the client has run before?
            ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
            out.writeObject(connpacket);
            System.out.println("Establishing connection");
            ConnackPacket connack = (ConnackPacket) in.readObject();
            this.id = connack.clientId;
-           System.out.println("recieved connack, connection established");
+           System.out.println("Recieved connack, connection established");
        }
        catch (UnknownHostException e) {
            throw e; 
@@ -152,12 +147,15 @@ public class Client {
                 in = connect();
             }
             else if (callType.equals(globals.PUBLISH)) {
+                //in = publish((Event) input);
                 in = connect();  //TODO
             }
             else if (callType.equals(globals.SUBSCRIBE)) {
+                // in = subscribe((Topic) input);
                 in = connect();  //TODO
             }
             else if (callType.equals(globals.UNSUBSCRIBE)) {
+                // in = unsubscribe((Topic) input);
                 in = connect();  //TODO
             }
             else {
@@ -209,52 +207,18 @@ public class Client {
     }
 
 
-
     /*
     * creates a new thread for listening to stdin. 
     */
     public void startCLI() {
-        ClientCli cli = new ClientCli();
-        cli.start(); 
+        ClientCLI cli = new ClientCLI( this );
+        Thread cliThread = new Thread( cli );
+        cliThread.start(); 
     }
    
-    public boolean socketTaken() {
-        return (this.socketMutex.availablePermits() == 1);
 
-    }
- 
-
-    private class ClientCli extends Thread {
-    
-         
-
-        ClientCli() {
-
-        }
-
-
-        public void run() {
-
-            while (true) {
- 
-                //listen on stdin
-                //parse
-                while (socketTaken()) {
-                    //do nothing. is this a bad way to do it?
-                }
-                try {
-                    socketMutex.acquire();   
-                    //calls to cli functions 
-                    socketMutex.release();   
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        } 
-  
-        //cli functions
-             //some of them call callmanager
+    public void exitService(){
+        System.out.println("This is not implemented yet...");
     }
 
 

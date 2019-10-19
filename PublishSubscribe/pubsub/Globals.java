@@ -27,6 +27,15 @@ public class Globals {
         EXIT_COMMAND + "\n" +
         LIST_TOPICS_COMMAND + "\n" +
         HELP_COMMAND + "\n";
+    
+    static final String CLIENT_HELP = "The following commands are available:\n" +
+        EXIT_COMMAND + "\n" +
+        ADVERTISE + " [TOPIC NAME] [TOPIC DESCRIPTION] \n" +
+        PUBLISH + " [TOPIC] [EVENT]\n" +
+        SUBSCRIBE + " [TOPIC]\n" +
+        UNSUBSCRIBE + " [TOPIC]\n" +
+        HELP_COMMAND + "\n";
+
 
 
 }
