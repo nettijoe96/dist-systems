@@ -1,5 +1,6 @@
-package pubsub;
+package packet;
 
+import pubsub.Globals;
 import java.net.NetworkInterface;
 import java.net.InetAddress;
 import java.util.Calendar;
@@ -26,15 +27,16 @@ public class Packet implements Serializable{
     }
 
 
-    final int getDeviceId(){
+    public final int getDeviceId(){
         return this.deviceId;
     }
 
-    final String getPacketId(){
+
+    public final String getPacketId(){
         return this.packetId;
     }
 
-    final String getPacketType(){
+    public final String getPacketType(){
         return this.packetType;
     }
 }

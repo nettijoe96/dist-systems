@@ -1,14 +1,14 @@
-package pubsub;
+package packet;
 
 
 
-class ExceptionPacket extends Packet {
+public class ExceptionPacket extends Packet {
 
     public String message; 
     public static final String EXCEPTION = "EXCEPTION";
 
 
-    ExceptionPacket(String message) {
+    public ExceptionPacket(String message) {
         super(EXCEPTION);     
         this.message = message;
 

@@ -4,8 +4,8 @@ public class Globals {
 
     public static final int BROKER_PORT = 60666;
 //    static final String BROKER_IP = "172.10.0.2";      
-    static final String BROKER_IP = "127.17.0.1";      
-    static final int initDeviceId = 0;
+    public static final String BROKER_IP = "127.17.0.1";      
+    public static final int initDeviceId = 0;
 
     public static final int serverConnectionBacklog = 100;
 
@@ -19,8 +19,8 @@ public class Globals {
     public static String UNSUBSCRIBE = "UNSUBSCRIBE";
 
     // CLI input 
-    static final String EXIT_COMMAND = "EXIT";
-    static final String LIST_TOPICS_COMMAND = "TOPICS";
+    static final String EXIT_COMMAND = "Q";
+    static final String LIST_TOPICS_COMMAND = "TOPIC";
     static final String HELP_COMMAND = "HELP";
 
     static final String BROKER_HELP = "The following commands are available:\n" +
@@ -29,12 +29,12 @@ public class Globals {
         HELP_COMMAND + "\n";
     
     static final String CLIENT_HELP = "The following commands are available:\n" +
-        EXIT_COMMAND + "\n" +
-        ADVERTISE + " [TOPIC NAME] [TOPIC DESCRIPTION] \n" +
-        PUBLISH + " [TOPIC] [EVENT]\n" +
-        SUBSCRIBE + " [TOPIC]\n" +
-        UNSUBSCRIBE + " [TOPIC]\n" +
-        HELP_COMMAND + "\n";
+        "advertise [topic name] [TOPIC DESCRIPTION] \n" +
+        "publish [TOPIC] [EVENT]\n" +
+        "subscribe [TOPIC]\n" +
+        "unsubscribe [TOPIC]\n" +
+        "help \n" + 
+        "q \n";
 
 
 

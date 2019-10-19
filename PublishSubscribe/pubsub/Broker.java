@@ -5,6 +5,7 @@
  */
 
 package pubsub;
+
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.Semaphore;
 import java.net.Socket;
@@ -171,6 +172,22 @@ public class Broker{
         }
     } 
 
+    /*
+    publish
+
+    adds new topic to topics ArrayList
+    @param topic
+    */
+    public void publish(Event event) {
+        Topic topic = event.topic;
+        if (!topicExists(topic)) {  //only add topic if it doesn't already exist
+            topicEvents.get(topic).add(event);
+            ArrayList<ClientData> subscribers = subscriptions.get(topic);
+            for(int i = 0; i < subscribers.size(); i++) {
+                subscribers.get(i).missedEvents.add(event);
+            }
+        }
+    } 
 
 
     /*

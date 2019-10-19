@@ -1,4 +1,5 @@
-package pubsub;
+package packet;
+import pubsub.Topic;
 
 public class UnsubscribePacket extends Packet{
     private Topic topic;

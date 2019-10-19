@@ -1,6 +1,9 @@
-package pubsub;
+package packet;
 
 import java.util.ArrayList;
+import pubsub.Event;
+import pubsub.Topic;
+
 
 public class NotifyPacket extends Packet{
     public ArrayList<Event> events;

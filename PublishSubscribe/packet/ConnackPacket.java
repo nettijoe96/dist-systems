@@ -2,7 +2,7 @@
  * ACK for connect packet
  */
 
-package pubsub;
+package packet;
 
 public class ConnackPacket extends Packet{
 

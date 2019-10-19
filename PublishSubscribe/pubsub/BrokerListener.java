@@ -7,7 +7,6 @@ package pubsub;
 
 
 import java.util.concurrent.*;
-import pubsub.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;

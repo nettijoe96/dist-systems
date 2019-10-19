@@ -7,6 +7,9 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
+import packet.*;
+
+
 
 public class ClientHandler implements Runnable{
 
@@ -150,9 +153,13 @@ public class ClientHandler implements Runnable{
     }
 
 
-    private Packet invokePublish( PublishPacket publishPacket, ClientData clientData ) {
-        return null;
-
+    private void invokePublish( PublishPacket publishPacket, ClientData clientData ) {
+        Event event = publishPacket.event;
+        Topic topic = event.topic;
+        if( listener.isTopicInList( topic.topic ) ) {   //TODO: switch to topicExists 
+            listener.broker.publish(event);
+        }
+        
     }
 
 

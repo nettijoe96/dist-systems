@@ -15,6 +15,7 @@ import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
+import packet.*;
 
 public class Client {
 
@@ -92,7 +93,7 @@ public class Client {
        }
     }
 
-    public ObjectInputStream advertise(Topic topic) throws UnknownHostException, IOException, ClassNotFoundException {
+    public ObjectInputStream advertise(Topic topic) throws UnknownHostException, IOException {
 
        //connect to server
        try {
@@ -115,12 +116,26 @@ public class Client {
     }
 
 
-/*
-    public Socket publish(Event event) {
-        Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
-        return socket;  
+    public ObjectInputStream publish(Event event) throws UnknownHostException, IOException  {
+       //connect to server
+       try {
+           System.out.println("Attempting connection to Broker");
+           Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
+           System.out.println("Connection to Broker successful");
+           PublishPacket packet = new PublishPacket(event, this.id);       
+           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+           ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+           out.writeObject(packet);
+           //ConnackPacket connack = (ConnackPacket) in.readObject(); //change if we want to get anything back
+           return in;
+       }
+       catch (UnknownHostException e) {
+           throw e; 
+       }
+       catch (IOException e) {
+           throw e; 
+       }
     }
-*/
 
     private void processNotify(NotifyPacket packet) {
         System.out.print("in process notify");
@@ -147,8 +162,7 @@ public class Client {
                 in = connect();
             }
             else if (callType.equals(globals.PUBLISH)) {
-                //in = publish((Event) input);
-                in = connect();  //TODO
+                in = publish((Event) input);
             }
             else if (callType.equals(globals.SUBSCRIBE)) {
                 // in = subscribe((Topic) input);

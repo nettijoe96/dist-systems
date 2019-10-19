@@ -3,7 +3,8 @@
  * Needs a topic that is to be advertised
  */
 
-package pubsub;
+package packet;
+import pubsub.Topic;
 
 public class AdvertisePacket extends Packet{
     public Topic topic;

@@ -3,7 +3,6 @@
  */
 package pubsub;
 
-
 import java.util.Scanner;
 
 public class BrokerCLI implements Runnable{
