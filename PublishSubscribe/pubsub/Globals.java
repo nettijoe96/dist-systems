@@ -9,7 +9,7 @@ public class Globals {
 
     public static final int serverConnectionBacklog = 100;
 
-    // Constants denoting certain types
+        // Constants denoting certain types
     public static String ADVERTISE = "ADVERTISE";
     public static String CLOSE = "CLOSE";
     public static String CONNECT = "CONNECT";
@@ -18,8 +18,15 @@ public class Globals {
     public static String SUBSCRIBE = "SUBSCRIBE";
     public static String UNSUBSCRIBE = "UNSUBSCRIBE";
 
-    // CLI input to exit
-    public static final String EXITLINE = "exit()";
+    // CLI input 
+    static final String EXIT_COMMAND = "EXIT";
+    static final String LIST_TOPICS_COMMAND = "TOPICS";
+    static final String HELP_COMMAND = "HELP";
+
+    static final String BROKER_HELP = "The following commands are available:\n" +
+        EXIT_COMMAND + "\n" +
+        LIST_TOPICS_COMMAND + "\n" +
+        HELP_COMMAND + "\n";
 
 
 }
