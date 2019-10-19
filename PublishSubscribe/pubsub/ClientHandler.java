@@ -59,18 +59,18 @@ public class ClientHandler implements Runnable{
             System.out.println(this.listener.broker.topics);
             //here we notify of new events and advertisements
             if (client.nonEmptyOutStream()) {
-                sendNotify(client);
+                NotifyPacket n = sendNotify(client);
+                out.writeObject(n); 
             }
+            ClosePacket c = new ClosePacket();
+            out.writeObject(c); 
+
 
         } catch(IOException e){
             e.printStackTrace();
         } catch(ClassNotFoundException e){
             e.printStackTrace();
         }
- 
-
-
-
 
     }
 

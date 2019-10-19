@@ -15,6 +15,11 @@ public class Topic implements Serializable {
         this.topic = topic;
     }
 
+    public Topic( String topic, String description){
+        this.topic = topic;
+        this.description = description;
+    }
+
     @Override
     public String toString(){
         return this.topic +"\n\t"+ this.description;

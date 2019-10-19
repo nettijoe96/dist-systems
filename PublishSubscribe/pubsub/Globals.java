@@ -2,23 +2,24 @@ package pubsub;
 
 public class Globals {
 
-    static final int BROKER_PORT = 60666;
+    public static final int BROKER_PORT = 60666;
 //    static final String BROKER_IP = "172.10.0.2";      
-    static final String BROKER_IP = "127.0.0.1";      
-    static final int initDeviceId = 0;
+    public static final String BROKER_IP = "127.0.0.1";      
+    public static final int initDeviceId = 0;
 
-    static final int serverConnectionBacklog = 100;
+    public static final int serverConnectionBacklog = 100;
 
     // Constants denoting certain types
-    static final String ADVERTISE = "ADVERTISE";
-    static final String CONNECT = "CONNECT";
-    static final String PUBLISH = "PUBLISH";
-    static final String NOTIFY = "NOTIFY";
-    static final String SUBSCRIBE = "SUBSCRIBE";
-    static final String UNSUBSCRIBE = "UNSUBSCRIBE";
+    public static String ADVERTISE = "ADVERTISE";
+    public static String CLOSE = "CLOSE";
+    public static String CONNECT = "CONNECT";
+    public static String PUBLISH = "PUBLISH";
+    public static String NOTIFY = "NOTIFY";
+    public static String SUBSCRIBE = "SUBSCRIBE";
+    public static String UNSUBSCRIBE = "UNSUBSCRIBE";
 
     // CLI input to exit
-    static final String EXITLINE = "exit()";
+    public static final String EXITLINE = "exit()";
 
 
 }
