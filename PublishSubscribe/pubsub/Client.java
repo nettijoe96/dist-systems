@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.lang.ClassNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Semaphore;
 
 public class Client {
 
@@ -22,6 +23,7 @@ public class Client {
     private ArrayList<Topic> ads;  
     private ArrayList<Topic> subscriptions;
     private HashMap<Topic, ArrayList<Event>> topicEvents;
+    private Semaphore socketMutex;
 
     public Client() {
        this.globals = new Globals();        
@@ -29,6 +31,7 @@ public class Client {
        this.ads = new ArrayList<Topic>();
        this.subscriptions = new ArrayList<Topic>();
        this.topicEvents = new HashMap<Topic, ArrayList<Event>>();
+       this.socketMutex = new Semaphore(1);
     }
 
     public Client(int id) {
@@ -189,6 +192,13 @@ public class Client {
     }
 
 
+    /*
+    * creates a new thread for heartbeat
+    */
+    public void startHeartbeat() {
+        Heartbeat hb = new Heartbeat();
+        hb.start(); 
+    }
 
     private class Heartbeat extends Thread {
     
@@ -196,7 +206,6 @@ public class Client {
             
         } 
         
-
     }
 
 
@@ -208,49 +217,71 @@ public class Client {
         ClientCli cli = new ClientCli();
         cli.start(); 
     }
-    
+   
+    public boolean socketTaken() {
+        return (this.socketMutex.availablePermits() == 1);
+
+    }
+ 
 
     private class ClientCli extends Thread {
     
+         
+
+        ClientCli() {
+
+        }
+
+
         public void run() {
 
-            //listen on stdin
-
-            //create appropiate packet for the command called
-
-            //create connect object and pass packet in
-
-            //
-
-
+            while (true) {
+ 
+                //listen on stdin
+                //parse
+                while (socketTaken()) {
+                    //do nothing. is this a bad way to do it?
+                }
+                try {
+                    socketMutex.acquire();   
+                    //calls to cli functions 
+                    socketMutex.release();   
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         } 
-
+  
+        //cli functions
+             //some of them call callmanager
     }
 
 
     public static void main(String[] args) {
         Client client = new Client();     //TODO: allow for cmd args or file processing to determine if client already has a deviceId from being run before. If so, use Client(deviceUUId) constructor
         Globals globals = new Globals();     
+         
 
         try {
-            System.out.println("Beginning connection initialization");
             client.initialConnect();        
-//        client.startCLI();  
-//        client.listen();    //listens for server to connect to it (server keeps cache of ip addresses)
-
+/*
             //test
             Topic topic = new Topic("1_topic_1", "test");
             client.callManager(globals.ADVERTISE, topic);
             System.out.println(client.ads);
+*/
+            client.startCLI();
+            client.startHeartbeat();
         }
         catch (UnknownHostException e) {
-            System.out.println(e); 
+            e.printStackTrace();
         }
         catch (IOException e) {
-            System.out.println(e); 
+            e.printStackTrace();
         }
         catch (ClassNotFoundException e) {
-            System.out.println(e); 
+            e.printStackTrace();
         }
     }
 
