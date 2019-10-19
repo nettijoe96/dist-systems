@@ -23,9 +23,9 @@ public class ClientCLI implements Runnable{
     public void run() {
         System.out.println("Ready to accept commands");
         Scanner scanner = new Scanner( System.in );
-        scanning: while(scanner.hasNextLine()){
+        scanning: while(true){
             System.out.print("> ");
-            
+
             String userInput = scanner.nextLine();
 
             String[] tokens = userInput.split(" ", 2);
