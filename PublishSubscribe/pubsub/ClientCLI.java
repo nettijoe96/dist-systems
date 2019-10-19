@@ -64,7 +64,7 @@ public class ClientCLI implements Runnable{
                         // Topics are equal if they have the same topic name
                         Topic topic = new Topic( topicName, "" );
                         Event event = new Event( topic, payload );
-                        this.client.callManager( globals.ADVERTISE, event );
+                        this.client.callManager( globals.PUBLISH, event );
                     }
                 }else{
                     printMalformed();

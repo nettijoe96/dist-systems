@@ -137,6 +137,10 @@ public class Client {
        }
     }
 
+
+
+
+
     private void processNotify(NotifyPacket packet) {
         System.out.print("in process notify");
         for(int i = 0; i < packet.events.size(); i++) {
@@ -153,29 +157,36 @@ public class Client {
     public <InputType> void callManager(String callType, InputType input) {
     
         Globals globals = new Globals();
-        ObjectInputStream in;
         try {
+            Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
             if (callType.equals(globals.ADVERTISE)) {
-                in = advertise((Topic) input);
+                AdvertisePacket adPacket = new AdvertisePacket((Topic) input, this.id);       
+                out.writeObject(adPacket);
             }
             else if (callType.equals(globals.CONNECT)) {
-                in = connect();
+                ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.id);       
+                out.writeObject(connpacket);
             }
             else if (callType.equals(globals.PUBLISH)) {
-                in = publish((Event) input);
+                PublishPacket pubPacket = new PublishPacket((Event) input, this.id);       
+                out.writeObject(pubPacket);
             }
             else if (callType.equals(globals.SUBSCRIBE)) {
-                // in = subscribe((Topic) input);
-                in = connect();  //TODO
+                SubscribePacket subPacket = new SubscribePacket((Topic) input, this.id);       
+                out.writeObject(subPacket);
             }
             else if (callType.equals(globals.UNSUBSCRIBE)) {
-                // in = unsubscribe((Topic) input);
-                in = connect();  //TODO
+                UnsubscribePacket unsubPacket = new UnsubscribePacket((Topic) input, this.id);       
+                out.writeObject(unsubPacket);
             }
             else {
                 throw new IllegalArgumentException("callType is abnormal in callmanager:" + callType);
             }
-            
+                        
+ 
             Packet packet = (Packet) in.readObject();  //either a close packet or a notify packet
             if (packet instanceof NotifyPacket) {
                 processNotify((NotifyPacket) packet);
