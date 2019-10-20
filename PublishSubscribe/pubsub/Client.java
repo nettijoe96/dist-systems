@@ -89,6 +89,7 @@ public class Client {
             else if (callType.equals(globals.CONNECT)) {
                 ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.id);       
                 out.writeObject(connpacket);
+                ConnackPacket connack = (ConnackPacket) in.readObject();
             }
             else if (callType.equals(globals.INITIALCONNECT)) {
                 ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
@@ -168,7 +169,7 @@ public class Client {
            
             while(true) {
                 try {
-                    sleep(30000); //30 seconds
+                    sleep(5000); //30 seconds
                     if(client.checkAccess()) { 
                         client.waitTillAccess(); 
                         client.callManager(globals.CONNECT, "");        

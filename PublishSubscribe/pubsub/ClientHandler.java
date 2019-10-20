@@ -36,7 +36,7 @@ public class ClientHandler implements Runnable{
                 client = getOrMakeClient(packet.getDeviceId());  //get client
             }
             catch(IllegalArgumentException e) {
-                response = (Packet) new ExceptionPacket("id not in brokers uuid list and not globals.initDeviceId");
+                response = (Packet) new ClosePacket("id not in brokers uuid list and not globals.initDeviceId");
                 out.writeObject(response);
                 return;
             }
