@@ -11,9 +11,6 @@ class ClientData {
 
     public int id;
     public ArrayList<Topic> subscriptions;
-    public String cachedIP;
-    public int cachedPort;
-    public Socket socket;    //we don't want a constant socket open, we this is fine for the first iteration of the protocol
     public Packet packet;
     public ArrayList<Topic> missedAds;
     public ArrayList<Event> missedEvents;
@@ -21,23 +18,16 @@ class ClientData {
     private Semaphore clientMutex;
     //TODO: add dictionary for easily keeping track of subscriptions/unsubscriptions topics
 
-    ClientData(int id, Socket socket) {
+    ClientData(int id) {
         this.subscriptions = new ArrayList<Topic>();
         this.missedAds = new ArrayList<Topic>();
         this.missedEvents = new ArrayList<Event>();
         this.clientMutex = new Semaphore(1);
         this.subscribeDict = new HashMap<Topic, Boolean>();
         this.id = id;
-        updateClientWithNewSocket(socket); 
     }
 
-    public void updateClientWithNewSocket(Socket socket) {
-        this.cachedIP = socket.getInetAddress().toString();
-        this.cachedPort = socket.getPort(); 
-        this.socket = socket;
-    } 
 
-   
     public void setPacketToSend(Packet packet) {
         this.packet = packet;
     }
@@ -92,6 +82,25 @@ class ClientData {
 
     public boolean isSubscribed(Topic topic) {
         return subscribeDict.get(topic);
+    }
+
+
+    public void clearMissed() {
+        this.missedEvents = new ArrayList<Event>();
+        this.missedAds = new ArrayList<Topic>();
+    }
+
+
+    public boolean waitTillAccess() {
+        while (true) {    //TODO: should have a timeout
+            try { 
+                lockClient();
+                return true;
+            }
+            catch (InterruptedException e) {
+                continue;
+            }
+        } 
     }
 
 }

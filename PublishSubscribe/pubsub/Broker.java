@@ -25,8 +25,8 @@ public class Broker{
     public ArrayList<Event> events = new ArrayList<>();
     public Semaphore eventsMutex = new Semaphore(1);
     public ArrayList<ClientData> clients = new ArrayList<>();
-    public HashMap<Topic, ArrayList<Event>> topicEvents = new HashMap<Topic, ArrayList<Event>>();
-    public HashMap<Topic, ArrayList<ClientData>> subscriptions = new HashMap<Topic, ArrayList<ClientData>>();
+    public HashMap<String, ArrayList<Event>> topicEvents = new HashMap<String, ArrayList<Event>>();
+    public HashMap<String, ArrayList<ClientData>> subscriptions = new HashMap<String, ArrayList<ClientData>>();
     public HashMap<Integer, ClientData> clientMap = new HashMap<Integer, ClientData>();
     private int nextid;
     private Globals globals;
@@ -127,14 +127,21 @@ public class Broker{
     adds new topic to topics ArrayList
     @param topic
     */
-    public void addEvent(Event event) {
+    public void addEvent(Event event, ClientData currClient) {
         Topic topic = event.topic;
         if (topicExists(topic)) {
-            this.topicEvents.get(topic).add(event);  //add event to list of events
-            ArrayList<ClientData> subscribers = this.subscriptions.get(topic);
+            this.topicEvents.get(topic.topic).add(event);  //add event to list of events
+            ArrayList<ClientData> subscribers = this.subscriptions.get(topic.topic);
             for(int i = 0; i < subscribers.size(); i++) {
                 ClientData client = subscribers.get(i);
-                client.missedEvents.add(event);
+                if(client.id != currClient.id) {
+                    client.waitTillAccess();   //TODO: this is a naive way of doing it because one problem thing can being it to a standstill
+                    client.missedEvents.add(event);
+                    client.unlockClient();
+                }
+                else {
+                    client.missedEvents.add(event);
+                }
             }
         }
          
@@ -148,7 +155,7 @@ public class Broker{
     */
     public boolean topicExists(Topic topic) {
         for(int i = 0; i < this.topics.size(); i++) {
-            if (topic.equals(this.topics.get(i))) {
+            if (topic.topic.equals(this.topics.get(i).topic)) {
                 return true;
             }
         }
@@ -162,33 +169,28 @@ public class Broker{
     adds new topic to topics ArrayList
     @param topic
     */
-    public void addTopic(Topic topic) {
+    public void addTopic(Topic topic, ClientData currClient) {
         if (!topicExists(topic)) {  //only add topic if it doesn't already exist
             topics.add(topic);
-            subscriptions.put(topic, new ArrayList<ClientData>());
+            System.out.println("in addTopic");            
+            System.out.println(topics);            
+            subscriptions.put(topic.topic, new ArrayList<ClientData>());
+            topicEvents.put(topic.topic, new ArrayList<Event>());
             for(int i = 0; i < clients.size(); i++) {
-                clients.get(i).missedAds.add(topic);
+                ClientData client = clients.get(i);
+                if(client.id != currClient.id) {
+                    client.waitTillAccess();   //TODO: this is a naive way of doing it because one problem thing can bring it to a standstill
+                    client.missedAds.add(topic);
+                    client.unlockClient();
+                }
+                else {
+                    client.missedAds.add(topic);
+                }
             }
+            System.out.println("in addTopic");            
+            System.out.println(topics);            
         }
     } 
-
-    /*
-    publish
-
-    adds new topic to topics ArrayList
-    @param topic
-    */
-    public void publish(Event event) {
-        Topic topic = event.topic;
-        if (!topicExists(topic)) {  //only add topic if it doesn't already exist
-            topicEvents.get(topic).add(event);
-            ArrayList<ClientData> subscribers = subscriptions.get(topic);
-            for(int i = 0; i < subscribers.size(); i++) {
-                subscribers.get(i).missedEvents.add(event);
-            }
-        }
-    } 
-
 
     /*
     subscribe
@@ -196,7 +198,7 @@ public class Broker{
     */
     public void subscribe(Topic topic, ClientData client) {
         if(topicExists(topic)) {
-            ArrayList<ClientData> subscribedClients = subscriptions.get(topic);
+            ArrayList<ClientData> subscribedClients = subscriptions.get(topic.topic);
             if(!subscribedClients.contains(client)) {
                 subscribedClients.add(client);
             }
@@ -210,13 +212,33 @@ public class Broker{
     */
     public void unsubscribe(Topic topic, ClientData client) {
         if(topicExists(topic)) {
-            ArrayList<ClientData> subscribedClients = subscriptions.get(topic);
+            ArrayList<ClientData> subscribedClients = subscriptions.get(topic.topic);
             if(subscribedClients.contains(client)) {
                 subscribedClients.remove(client);
             }
         }
     }
 
+    public Topic getTopicByName( String topicName ){
+        try{
+            this.topicsMutex.acquire();
+            for( Topic topic : this.topics ){
+                System.out.print("224\n");
+                System.out.println(topicName);
+                System.out.println(topic.topic);
+                if( topic.topic.equals(topicName) ) {
+                    this.topicsMutex.release();
+                    return topic;
+                }
+            }
+            this.topicsMutex.release();
+        }catch( InterruptedException e ){
+            System.out.println("Interupted Exception");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 	
     public static void main(String[] args) {

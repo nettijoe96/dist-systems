@@ -21,136 +21,56 @@ public class Client {
 
     private int id; 
     private Globals globals;
-    private ArrayList<Topic> ads;  
-    private ArrayList<Topic> subscriptions;
-    private HashMap<Topic, ArrayList<Event>> topicEvents;
+    public ArrayList<String> ads;  
+    public ArrayList<String> subscriptions;
+    public HashMap<String, ArrayList<Event>> topicEvents;
+    public HashMap<String, Topic> nameTopic;
     private Semaphore socketMutex;
 
     public Client() {
-       this.globals = new Globals();        
        this.id = globals.initDeviceId;
-       this.ads = new ArrayList<Topic>();
-       this.subscriptions = new ArrayList<Topic>();
-       this.topicEvents = new HashMap<Topic, ArrayList<Event>>();
-       this.socketMutex = new Semaphore(1);
+       init();
     }
 
     public Client(int id) {
-       this.globals = new Globals();        
        this.id = id;
-       this.ads = new ArrayList<Topic>();
-       this.topicEvents = new HashMap<Topic, ArrayList<Event>>();
+       init();
     }
 
 
-    public void initialConnect() throws UnknownHostException, IOException, ClassNotFoundException {
-
-       //connect to server
-       try {
-           System.out.println("Attempting Connection to Broker");
-           // For some reason explicitly putting the address is the only way to connect???
-           Socket socket = new Socket("172.17.0.1", this.globals.BROKER_PORT);
-
-           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-           ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-
-           // Need to make sure that it accounts for if the client has run before?
-           ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
-           out.writeObject(connpacket);
-           System.out.println("Establishing connection");
-           ConnackPacket connack = (ConnackPacket) in.readObject();
-           this.id = connack.clientId;
-           System.out.println("Recieved connack, connection established");
-       }
-       catch (UnknownHostException e) {
-           throw e; 
-       }
-       catch (IOException e) {
-           throw e; 
-       }
-       catch (ClassNotFoundException e) {
-           throw e; 
-       }
-
+    private void init() {
+       this.globals = new Globals();        
+       this.ads = new ArrayList<String>();
+       this.subscriptions = new ArrayList<String>();
+       this.topicEvents = new HashMap<String, ArrayList<Event>>();
+       this.nameTopic = new HashMap<String, Topic>();
+       this.socketMutex = new Semaphore(1);
     }
-
-    public ObjectInputStream connect() throws UnknownHostException, IOException, ClassNotFoundException {
-
-       //connect to server
-       try {
-           Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
-           ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.id);       
-           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-           ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-           out.writeObject(connpacket);
-           return in;
-       }
-       catch (UnknownHostException e) {
-           throw e; 
-       }
-       catch (IOException e) {
-           throw e; 
-       }
-    }
-
-    public ObjectInputStream advertise(Topic topic) throws UnknownHostException, IOException {
-
-       //connect to server
-       try {
-           System.out.println("Attempting connection to Broker");
-           Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
-           System.out.println("Connection to Broker successful");
-           AdvertisePacket packet = new AdvertisePacket(topic, this.id);       
-           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-           ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-           out.writeObject(packet);
-           //ConnackPacket connack = (ConnackPacket) in.readObject(); //change if we want to get anything back
-           return in;
-       }
-       catch (UnknownHostException e) {
-           throw e; 
-       }
-       catch (IOException e) {
-           throw e; 
-       }
-    }
-
-
-    public ObjectInputStream publish(Event event) throws UnknownHostException, IOException  {
-       //connect to server
-       try {
-           System.out.println("Attempting connection to Broker");
-           Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
-           System.out.println("Connection to Broker successful");
-           PublishPacket packet = new PublishPacket(event, this.id);       
-           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-           ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-           out.writeObject(packet);
-           //ConnackPacket connack = (ConnackPacket) in.readObject(); //change if we want to get anything back
-           return in;
-       }
-       catch (UnknownHostException e) {
-           throw e; 
-       }
-       catch (IOException e) {
-           throw e; 
-       }
-    }
-
-
-
-
 
     private void processNotify(NotifyPacket packet) {
         System.out.print("in process notify");
         for(int i = 0; i < packet.events.size(); i++) {
             Event event = packet.events.get(i);
             Topic topic = event.topic;
-            this.topicEvents.get(topic).add(event);
+            this.topicEvents.get(topic.topic).add(event);
         }
         for(int i = 0; i < packet.ads.size(); i++) {
             Topic topic = packet.ads.get(i);
-            this.ads.add(topic);
+            this.ads.add(topic.topic);
+            this.nameTopic.put(topic.topic, topic);
+        }
+    }
+
+   
+    private void subscribe(String name) {
+        if(topicExists(name)) {
+            Topic topic = getTopicByName(name);
+            subscriptions.add(name);
+            topicEvents.put(name, new ArrayList<Event>()); 
+        }        
+        else {
+            System.out.println("doesn't exist in subscribe"); 
+            System.out.println(nameTopic);
         }
     }
 
@@ -170,12 +90,22 @@ public class Client {
                 ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.id);       
                 out.writeObject(connpacket);
             }
+            else if (callType.equals(globals.INITIALCONNECT)) {
+                ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
+                out.writeObject(connpacket);
+                System.out.println("Establishing connection");
+                ConnackPacket connack = (ConnackPacket) in.readObject();
+                this.id = connack.clientId;
+                System.out.println("Recieved connack, connection established");
+            }
             else if (callType.equals(globals.PUBLISH)) {
                 PublishPacket pubPacket = new PublishPacket((Event) input, this.id);       
                 out.writeObject(pubPacket);
             }
             else if (callType.equals(globals.SUBSCRIBE)) {
-                SubscribePacket subPacket = new SubscribePacket((Topic) input, this.id);       
+                Topic topic = (Topic) input;
+                subscribe(topic.topic);
+                SubscribePacket subPacket = new SubscribePacket(topic, this.id);       
                 out.writeObject(subPacket);
             }
             else if (callType.equals(globals.UNSUBSCRIBE)) {
@@ -250,31 +180,21 @@ public class Client {
     public static void main(String[] args) {
         Client client = new Client();     //TODO: allow for cmd args or file processing to determine if client already has a deviceId from being run before. If so, use Client(deviceUUId) constructor
         Globals globals = new Globals();     
-         
-
-        try {
-            client.initialConnect();        
-/*
-            //test
-            Topic topic = new Topic("1_topic_1", "test");
-            client.callManager(globals.ADVERTISE, topic);
-            System.out.println(client.ads);
-*/
-            client.startCLI();
-            client.startHeartbeat();
-        }
-        catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        client.callManager(globals.INITIALCONNECT, "");        
+        client.startCLI();
+        client.startHeartbeat();
     }
 
 
+    public Topic getTopicByName( String topicName ){
+        return nameTopic.get(topicName);
+    }
+
+    public boolean topicExists(String topicName) {
+        System.out.println("in topic exists " + topicName);
+        System.out.println(nameTopic.get(topicName));
+        return nameTopic.get(topicName) != null; 
+    }
 }
 
 

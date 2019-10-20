@@ -40,8 +40,8 @@ public class ClientHandler implements Runnable{
                 out.writeObject(response);
                 return;
             }
-            client.updateClientWithNewSocket(socket);                         // update client data
-
+      
+            boolean access = client.waitTillAccess();
             if( packet.getPacketType().equals(this.globals.CONNECT) ){        // connect
                 ConnectPacket connectPacket = (ConnectPacket) packet;
                 // Get your connack after processing the connect packet
@@ -56,7 +56,7 @@ public class ClientHandler implements Runnable{
                 invokePublish( (PublishPacket) packet, client );
             }
             else if( packet.getPacketType().equals(this.globals.ADVERTISE) ){  // advertise
-                invokeAdvertise((AdvertisePacket) packet);
+                invokeAdvertise((AdvertisePacket) packet, client);
             }
             
             System.out.println(this.listener.broker.topics);
@@ -67,7 +67,7 @@ public class ClientHandler implements Runnable{
             }
             ClosePacket c = new ClosePacket();
             out.writeObject(c); 
-
+            client.unlockClient();
 
         } catch(IOException e){
             e.printStackTrace();
@@ -90,6 +90,7 @@ public class ClientHandler implements Runnable{
             }
         }
         NotifyPacket packet = new NotifyPacket(missedEvents, client.missedAds);
+        client.clearMissed();
         return packet;
     }
 
@@ -108,8 +109,12 @@ public class ClientHandler implements Runnable{
         if( id == this.globals.initDeviceId ) {
             //here we have a brand new client. We need to give it a uuid.
             int clientId = this.listener.broker.getNewId();
-            ClientData client = new ClientData(clientId, socket);
+            ClientData client = new ClientData(clientId);
             this.listener.broker.addClient(client);
+            client.missedAds = new ArrayList<Topic>();
+            for(Topic t : this.listener.broker.topics) {
+                client.missedAds.add(t);
+            }
             return client;
         }
         else {
@@ -130,7 +135,7 @@ public class ClientHandler implements Runnable{
         String topicName = subscribePacket.getTopic().topic;
         // Check with listener if this is a valid topic
         if( listener.isTopicInList( topicName ) ) {     //TODO: switch to topicExists
-            Topic topic = listener.getTopicByName(topicName);
+            Topic topic = listener.broker.getTopicByName(topicName);
             client.addSubscription(topic);
             listener.broker.subscribe(topic, client);
         }
@@ -146,18 +151,19 @@ public class ClientHandler implements Runnable{
         String topicName = unsubscribePacket.getTopic().topic;
         // Check with listener if this is a valid topic
         if( listener.isTopicInList( topicName ) ) {   //TODO: switch to topicExists 
-            Topic topic = listener.getTopicByName(topicName);
+            Topic topic = listener.broker.getTopicByName(topicName);
             client.removeSubscription(topic);
             listener.broker.unsubscribe(topic, client);
         }
     }
 
 
-    private void invokePublish( PublishPacket publishPacket, ClientData clientData ) {
+    private void invokePublish( PublishPacket publishPacket, ClientData client ) {
         Event event = publishPacket.event;
         Topic topic = event.topic;
-        if( listener.isTopicInList( topic.topic ) ) {   //TODO: switch to topicExists 
-            listener.broker.publish(event);
+        System.out.println("invokepublish");
+        if( listener.broker.topicExists(topic)) {
+            listener.broker.addEvent(event, client);
         }
         
     }
@@ -166,9 +172,9 @@ public class ClientHandler implements Runnable{
     /*
     * advertise
     */ 
-    private void invokeAdvertise ( AdvertisePacket packet ) {
+    private void invokeAdvertise ( AdvertisePacket packet, ClientData client) {
         Topic topic = packet.topic;
-        this.listener.broker.addTopic(topic);  
+        this.listener.broker.addTopic(topic, client);  
     }
 
 

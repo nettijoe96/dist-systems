@@ -6,6 +6,7 @@ public class PublishPacket extends Packet{
 
     public PublishPacket(Event event, int id){
         super("PUBLISH", id);
+        this.event = event;
     }
 }
 
