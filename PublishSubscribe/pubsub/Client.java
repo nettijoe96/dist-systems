@@ -149,14 +149,38 @@ public class Client {
     * creates a new thread for heartbeat
     */
     public void startHeartbeat() {
-        Heartbeat hb = new Heartbeat();
+        Heartbeat hb = new Heartbeat(this);
         hb.start(); 
     }
 
     private class Heartbeat extends Thread {
-    
+       
+        Globals globals; 
+        Client client;
+  
+        Heartbeat(Client client) {
+            this.globals = new Globals();
+            this.client = client;
+        }
+
+
         public void run() {
-            
+           
+            while(true) {
+                try {
+                    sleep(30000); //30 seconds
+                    if(client.checkAccess()) { 
+                        client.waitTillAccess(); 
+                        client.callManager(globals.CONNECT, "");        
+                        client.unlockClient();
+                    }
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+     
+            }
+ 
         } 
         
     }
@@ -195,6 +219,41 @@ public class Client {
         System.out.println(nameTopic.get(topicName));
         return nameTopic.get(topicName) != null; 
     }
+
+    public void lockClient() throws InterruptedException {
+        try {
+            socketMutex.acquire();
+        }
+        catch (InterruptedException e) {
+            throw e;
+        }
+    }
+
+    public void unlockClient() {
+        socketMutex.release();
+    }
+
+    public boolean checkAccess() {
+        if(socketMutex.availablePermits() == 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean waitTillAccess() {
+        while (true) {    //TODO: should have a timeout
+            try { 
+                lockClient();
+                return true;
+            }
+            catch (InterruptedException e) {
+                continue;
+            }
+        } 
+    }
+
 }
 
 

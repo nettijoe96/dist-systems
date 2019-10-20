@@ -71,7 +71,6 @@ class ClientData {
 
 
     public boolean checkAccess() {
-
         if(clientMutex.availablePermits() == 1) {
             return true;
         }

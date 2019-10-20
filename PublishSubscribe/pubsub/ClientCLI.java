@@ -33,6 +33,8 @@ public class ClientCLI implements Runnable{
             
             String command = tokens[0].toUpperCase();
 
+            this.client.waitTillAccess();
+
             // switch statement will not work here
             // EXIT
             if( command.equals( globals.EXIT_COMMAND) ){
@@ -177,6 +179,9 @@ public class ClientCLI implements Runnable{
             else{
                 System.out.println("Command not understood. Enter " + globals.HELP_COMMAND +" for help.");
             }
+           
+            client.unlockClient();
+        
         }
     }
     private void printTopic(Topic t) {
