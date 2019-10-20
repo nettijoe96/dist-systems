@@ -31,6 +31,8 @@ public class Globals {
     static final String BROKER_HELP = "The following commands are available:\n" +
         EXIT_COMMAND + "\n" +
         LIST_TOPICS + "\n" +
+        "event [topic] [event name]  \n" +  
+        "subscription [topic] \n" +  
         HELP_COMMAND + "\n";
     
     static final String CLIENT_HELP = "The following commands are available:\n" +
@@ -43,7 +45,6 @@ public class Globals {
         "subscriptions \n" +  
         "subscription [topic] \n" +  
         "topics \n" +  
-        "topic [topic] \n" +  
         "event [topic] [event name]  \n" +  
 
         
