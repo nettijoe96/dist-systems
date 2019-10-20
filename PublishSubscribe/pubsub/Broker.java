@@ -130,10 +130,13 @@ public class Broker{
     public void addEvent(Event event, ClientData currClient) {
         Topic topic = event.topic;
         if (topicExists(topic)) {
+            System.out.println("addEvent");
             this.topicEvents.get(topic.topic).add(event);  //add event to list of events
             ArrayList<ClientData> subscribers = this.subscriptions.get(topic.topic);
             for(int i = 0; i < subscribers.size(); i++) {
                 ClientData client = subscribers.get(i);
+                System.out.print("subscribers: ");
+                System.out.println(client.id);
                 if(client.id != currClient.id) {
                     client.waitTillAccess();   //TODO: this is a naive way of doing it because one problem thing can being it to a standstill
                     client.missedEvents.add(event);
@@ -199,8 +202,9 @@ public class Broker{
     public void subscribe(Topic topic, ClientData client) {
         if(topicExists(topic)) {
             ArrayList<ClientData> subscribedClients = subscriptions.get(topic.topic);
-            if(!subscribedClients.contains(client)) {
-                subscribedClients.add(client);
+            subscribedClients.add(client);
+            for(Event e : topicEvents.get(topic.topic)) {
+                client.missedEvents.add(e);
             }
         }
     }
@@ -213,8 +217,11 @@ public class Broker{
     public void unsubscribe(Topic topic, ClientData client) {
         if(topicExists(topic)) {
             ArrayList<ClientData> subscribedClients = subscriptions.get(topic.topic);
-            if(subscribedClients.contains(client)) {
-                subscribedClients.remove(client);
+            for(int i = 0; i < subscribedClients.size(); i++) {
+                ClientData c = subscribedClients.get(i);
+                if(c.id == client.id) {
+                    subscribedClients.remove(i);
+                }
             }
         }
     }

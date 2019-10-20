@@ -52,6 +52,7 @@ public class Client {
         for(int i = 0; i < packet.events.size(); i++) {
             Event event = packet.events.get(i);
             Topic topic = event.topic;
+            System.out.print(event);
             this.topicEvents.get(topic.topic).add(event);
         }
         for(int i = 0; i < packet.ads.size(); i++) {
@@ -85,6 +86,7 @@ public class Client {
             if (callType.equals(globals.ADVERTISE)) {
                 AdvertisePacket adPacket = new AdvertisePacket((Topic) input, this.id);       
                 out.writeObject(adPacket);
+                System.out.println("in advertise in callmanager");
             }
             else if (callType.equals(globals.CONNECT)) {
                 ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.id);       
@@ -107,6 +109,7 @@ public class Client {
                 Topic topic = (Topic) input;
                 subscribe(topic.topic);
                 SubscribePacket subPacket = new SubscribePacket(topic, this.id);       
+                System.out.println("subscribe in call manager");
                 out.writeObject(subPacket);
             }
             else if (callType.equals(globals.UNSUBSCRIBE)) {

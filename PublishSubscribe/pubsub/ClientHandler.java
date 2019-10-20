@@ -132,10 +132,11 @@ public class ClientHandler implements Runnable{
     }
 
     private void invokeSubscribe( SubscribePacket subscribePacket, ClientData client ) {
-        String topicName = subscribePacket.getTopic().topic;
+        Topic topic = subscribePacket.getTopic();
         // Check with listener if this is a valid topic
-        if( listener.isTopicInList( topicName ) ) {     //TODO: switch to topicExists
-            Topic topic = listener.broker.getTopicByName(topicName);
+        System.out.println("invokeSub1");
+        if( listener.broker.topicExists( topic ) ) {     //TODO: switch to topicExists
+            System.out.println("invokeSub2");
             client.addSubscription(topic);
             listener.broker.subscribe(topic, client);
         }
@@ -148,10 +149,9 @@ public class ClientHandler implements Runnable{
 
 
     private void invokeUnsubscribe( UnsubscribePacket unsubscribePacket, ClientData client ) {
-        String topicName = unsubscribePacket.getTopic().topic;
+        Topic topic = unsubscribePacket.getTopic();
         // Check with listener if this is a valid topic
-        if( listener.isTopicInList( topicName ) ) {   //TODO: switch to topicExists 
-            Topic topic = listener.broker.getTopicByName(topicName);
+        if( listener.broker.topicExists( topic ) ) {     //TODO: switch to topicExists
             client.removeSubscription(topic);
             listener.broker.unsubscribe(topic, client);
         }

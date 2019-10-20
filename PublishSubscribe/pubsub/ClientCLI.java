@@ -34,7 +34,7 @@ public class ClientCLI implements Runnable{
             String command = tokens[0].toUpperCase();
 
             this.client.waitTillAccess();
-
+            System.out.println("after access");
             // switch statement will not work here
             // EXIT
             if( command.equals( globals.EXIT_COMMAND) ){

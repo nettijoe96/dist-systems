@@ -10,20 +10,20 @@ import java.util.concurrent.Semaphore;
 class ClientData {
 
     public int id;
-    public ArrayList<Topic> subscriptions;
+    public ArrayList<String> subscriptions;
     public Packet packet;
     public ArrayList<Topic> missedAds;
     public ArrayList<Event> missedEvents;
-    public HashMap<Topic, Boolean> subscribeDict;
+    public HashMap<String, Boolean> subscribeDict;
     private Semaphore clientMutex;
     //TODO: add dictionary for easily keeping track of subscriptions/unsubscriptions topics
 
     ClientData(int id) {
-        this.subscriptions = new ArrayList<Topic>();
+        this.subscriptions = new ArrayList<String>();
         this.missedAds = new ArrayList<Topic>();
         this.missedEvents = new ArrayList<Event>();
         this.clientMutex = new Semaphore(1);
-        this.subscribeDict = new HashMap<Topic, Boolean>();
+        this.subscribeDict = new HashMap<String, Boolean>();
         this.id = id;
     }
 
@@ -42,16 +42,16 @@ class ClientData {
     }
 
     public void addSubscription( Topic topic ){
-        if( this.subscribeDict.get(topic) != true ){
-            subscriptions.add( topic );
-            subscribeDict.put(topic, true);
+        if( this.subscribeDict.containsKey(topic.topic) != true ){
+            subscriptions.add( topic.topic );
+            subscribeDict.put(topic.topic, true);
         }
     }
 
     public void removeSubscription( Topic topic ){
-        if( this.subscribeDict.get(topic) == true ){
-            subscriptions.remove( topic );
-            subscribeDict.put(topic, false);
+        if( this.subscribeDict.get(topic.topic) == true ){
+            subscriptions.remove( topic.topic );
+            subscribeDict.put(topic.topic, false);
         }
     }
 
@@ -69,7 +69,6 @@ class ClientData {
         clientMutex.release();
     }
 
-
     public boolean checkAccess() {
         if(clientMutex.availablePermits() == 1) {
             return true;
@@ -80,7 +79,7 @@ class ClientData {
     }
 
     public boolean isSubscribed(Topic topic) {
-        return subscribeDict.get(topic);
+        return subscribeDict.get(topic.topic);
     }
 
 

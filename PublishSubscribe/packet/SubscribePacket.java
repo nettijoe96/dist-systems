@@ -5,7 +5,7 @@ public class SubscribePacket extends Packet{
     private Topic topic;
 
     public SubscribePacket( Topic topic, int id){
-        super("subscribe", id);
+        super("SUBSCRIBE", id);
         this.topic = topic;
     }
 

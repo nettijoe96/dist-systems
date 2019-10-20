@@ -6,7 +6,7 @@ package packet;
 
 public class ConnackPacket extends Packet{
 
-    static final String CONNACK = "connack";
+    static final String CONNACK = "CONNACK";
     
     public int clientId;   
 
