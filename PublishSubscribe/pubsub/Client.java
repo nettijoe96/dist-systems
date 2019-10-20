@@ -75,6 +75,12 @@ public class Client {
         }
     }
 
+
+    private void unsubscribe(String name) {
+        subscriptions.remove(name);
+    }
+
+
     public <InputType> void callManager(String callType, InputType input) {
     
         Globals globals = new Globals();
@@ -113,7 +119,9 @@ public class Client {
                 out.writeObject(subPacket);
             }
             else if (callType.equals(globals.UNSUBSCRIBE)) {
-                UnsubscribePacket unsubPacket = new UnsubscribePacket((Topic) input, this.id);       
+                Topic topic = (Topic) input;
+                unsubscribe(topic.topic);
+                UnsubscribePacket unsubPacket = new UnsubscribePacket(topic, this.id);       
                 out.writeObject(unsubPacket);
             }
             else {
