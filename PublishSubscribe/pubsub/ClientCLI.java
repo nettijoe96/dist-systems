@@ -34,23 +34,16 @@ public class ClientCLI implements Runnable{
             String command = tokens[0].toUpperCase();
 
             this.client.waitTillAccess();
-            System.out.println("after access");
-            // switch statement will not work here
-            // EXIT
-            if( command.equals( globals.EXIT_COMMAND) ){
-                this.client.exitService();
-                break scanning;
             //ADVERTISE
-            }else if( command.equals( globals.ADVERTISE ) ){
-                if( tokens.length == 2 ){
-                    String[] subTokens = tokens[1].split(" ", 2);
-                    if( subTokens.length == 2 ){
-                        String topicName = subTokens[0];
-                        String topicDescription = subTokens[1];
-                        Topic topic = new Topic( topicName, topicDescription );
-                        this.client.callManager( globals.ADVERTISE, topic );
-                    }
-                }else{
+            if( command.equals( globals.ADVERTISE ) ){
+                String[] subTokens = tokens[1].split(" ", 2);
+                if( subTokens.length == 2 ){
+                    String topicName = subTokens[0];
+                    String topicDescription = subTokens[1];
+                    Topic topic = new Topic( topicName, topicDescription );
+                    this.client.callManager( globals.ADVERTISE, topic );
+                }
+                else{
                     printMalformed();
                     continue;
                 }
@@ -126,7 +119,6 @@ public class ClientCLI implements Runnable{
                 if( tokens.length == 2 ){
                     String topicName = tokens[1];
                     Topic topic = this.client.getTopicByName(topicName);
-                    System.out.println(this.client.subscriptions);
                     if(topic == null) {
                         System.out.println("no such topic exists");  
                     }

@@ -71,15 +71,12 @@ public class BrokerListener implements Runnable{
 
         // Continually listens for new client connections and adds them
         while(true){
-            System.out.println("Waiting for client connection");
 
             try{
                 Socket socket;
                 socket = this.serverSocket.accept();
-                System.out.println("New client connected!");
 
                 handleSocket( socket );
-                System.out.println("after addClient");
                                 
             }catch( Exception e ){
                 e.printStackTrace();

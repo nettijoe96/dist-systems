@@ -48,11 +48,9 @@ public class Client {
     }
 
     private void processNotify(NotifyPacket packet) {
-        System.out.print("in process notify");
         for(int i = 0; i < packet.events.size(); i++) {
             Event event = packet.events.get(i);
             Topic topic = event.topic;
-            System.out.print(event);
             this.topicEvents.get(topic.topic).add(event);
         }
         for(int i = 0; i < packet.ads.size(); i++) {
@@ -70,7 +68,6 @@ public class Client {
             topicEvents.put(name, new ArrayList<Event>()); 
         }        
         else {
-            System.out.println("doesn't exist in subscribe"); 
             System.out.println(nameTopic);
         }
     }
@@ -92,7 +89,6 @@ public class Client {
             if (callType.equals(globals.ADVERTISE)) {
                 AdvertisePacket adPacket = new AdvertisePacket((Topic) input, this.id);       
                 out.writeObject(adPacket);
-                System.out.println("in advertise in callmanager");
             }
             else if (callType.equals(globals.CONNECT)) {
                 ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.id);       
@@ -115,7 +111,6 @@ public class Client {
                 Topic topic = (Topic) input;
                 subscribe(topic.topic);
                 SubscribePacket subPacket = new SubscribePacket(topic, this.id);       
-                System.out.println("subscribe in call manager");
                 out.writeObject(subPacket);
             }
             else if (callType.equals(globals.UNSUBSCRIBE)) {
@@ -208,10 +203,6 @@ public class Client {
     }
    
 
-    public void exitService(){
-        System.out.println("This is not implemented yet...");
-    }
-
 
     public static void main(String[] args) {
         Client client = new Client();     //TODO: allow for cmd args or file processing to determine if client already has a deviceId from being run before. If so, use Client(deviceUUId) constructor
@@ -227,8 +218,6 @@ public class Client {
     }
 
     public boolean topicExists(String topicName) {
-        System.out.println("in topic exists " + topicName);
-        System.out.println(nameTopic.get(topicName));
         return nameTopic.get(topicName) != null; 
     }
 

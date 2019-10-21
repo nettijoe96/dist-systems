@@ -63,15 +63,6 @@ public class Broker{
     }
 
     /*
-     * Exit the service
-     */
-    protected void exitService(){
-        // This should be handled better but it will work for now?
-        System.out.println("Broker service stopping");
-        System.exit(0);
-    }
-
-    /*
     getClient
 
     gets client from clientMap
@@ -130,13 +121,10 @@ public class Broker{
     public void addEvent(Event event, ClientData currClient) {
         Topic topic = event.topic;
         if (topicExists(topic)) {
-            System.out.println("addEvent");
             this.topicEvents.get(topic.topic).add(event);  //add event to list of events
             ArrayList<ClientData> subscribers = this.subscriptions.get(topic.topic);
             for(int i = 0; i < subscribers.size(); i++) {
                 ClientData client = subscribers.get(i);
-                System.out.print("subscribers: ");
-                System.out.println(client.id);
                 if(client.id != currClient.id) {
                     client.waitTillAccess();   //TODO: this is a naive way of doing it because one problem thing can being it to a standstill
                     client.missedEvents.add(event);
@@ -175,8 +163,6 @@ public class Broker{
     public void addTopic(Topic topic, ClientData currClient) {
         if (!topicExists(topic)) {  //only add topic if it doesn't already exist
             topics.add(topic);
-            System.out.println("in addTopic");            
-            System.out.println(topics);            
             subscriptions.put(topic.topic, new ArrayList<ClientData>());
             topicEvents.put(topic.topic, new ArrayList<Event>());
             for(int i = 0; i < clients.size(); i++) {
@@ -190,8 +176,6 @@ public class Broker{
                     client.missedAds.add(topic);
                 }
             }
-            System.out.println("in addTopic");            
-            System.out.println(topics);            
         }
     } 
 
@@ -230,9 +214,6 @@ public class Broker{
         try{
             this.topicsMutex.acquire();
             for( Topic topic : this.topics ){
-                System.out.print("224\n");
-                System.out.println(topicName);
-                System.out.println(topic.topic);
                 if( topic.topic.equals(topicName) ) {
                     this.topicsMutex.release();
                     return topic;

@@ -20,7 +20,6 @@ public class Globals {
     public static String UNSUBSCRIBE = "UNSUBSCRIBE";
 
     // CLI input 
-    static final String EXIT_COMMAND = "Q";
     static final String LIST_TOPICS = "TOPICS";
     static final String HELP_COMMAND = "HELP";
     static final String LIST_SUBSCRIPTIONS = "SUBSCRIPTIONS";
@@ -29,7 +28,6 @@ public class Globals {
     static final String EVENT = "EVENT";
 
     static final String BROKER_HELP = "The following commands are available:\n" +
-        EXIT_COMMAND + "\n" +
         LIST_TOPICS + "\n" +
         "event [topic] [event name]  \n" +  
         "subscription [topic] \n" +  
@@ -48,8 +46,7 @@ public class Globals {
         "event [topic] [event name]  \n" +  
 
         
-        "\n help \n" + 
-        "q \n";
+        "\n help";
 
 
 

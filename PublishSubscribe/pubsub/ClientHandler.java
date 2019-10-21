@@ -59,7 +59,6 @@ public class ClientHandler implements Runnable{
                 invokeAdvertise((AdvertisePacket) packet, client);
             }
             
-            System.out.println(this.listener.broker.topics);
             //here we notify of new events and advertisements
             if (client.nonEmptyOutStream()) {
                 NotifyPacket n = sendNotify(client);
@@ -134,9 +133,7 @@ public class ClientHandler implements Runnable{
     private void invokeSubscribe( SubscribePacket subscribePacket, ClientData client ) {
         Topic topic = subscribePacket.getTopic();
         // Check with listener if this is a valid topic
-        System.out.println("invokeSub1");
         if( listener.broker.topicExists( topic ) ) {     //TODO: switch to topicExists
-            System.out.println("invokeSub2");
             client.addSubscription(topic);
             listener.broker.subscribe(topic, client);
         }
@@ -161,7 +158,6 @@ public class ClientHandler implements Runnable{
     private void invokePublish( PublishPacket publishPacket, ClientData client ) {
         Event event = publishPacket.event;
         Topic topic = event.topic;
-        System.out.println("invokepublish");
         if( listener.broker.topicExists(topic)) {
             listener.broker.addEvent(event, client);
         }

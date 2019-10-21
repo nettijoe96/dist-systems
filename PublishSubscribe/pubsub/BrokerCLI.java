@@ -27,11 +27,7 @@ public class BrokerCLI implements Runnable{
             
             String command = tokens[0].toUpperCase();
 
-            // switch statement will not work here
-            if( command.equals( globals.EXIT_COMMAND) ){
-                this.broker.exitService();
-                break scanning;
-            }else if( command.equals( globals.LIST_TOPICS ) ){
+            if( command.equals( globals.LIST_TOPICS ) ){
                 try{
                     this.broker.topicsMutex.acquire();
                     System.out.println("The following topics are available:");
