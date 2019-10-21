@@ -41,7 +41,6 @@ public class ClientHandler implements Runnable{
                 return;
             }
       
-            boolean access = client.waitTillAccess();
             if( packet.getPacketType().equals(this.globals.CONNECT) ){        // connect
                 ConnectPacket connectPacket = (ConnectPacket) packet;
                 // Get your connack after processing the connect packet
@@ -66,7 +65,6 @@ public class ClientHandler implements Runnable{
             }
             ClosePacket c = new ClosePacket();
             out.writeObject(c); 
-            client.unlockClient();
 
         } catch(IOException e){
             e.printStackTrace();
@@ -80,6 +78,7 @@ public class ClientHandler implements Runnable{
 
 
     private NotifyPacket sendNotify(ClientData client) {
+        boolean access = client.waitTillAccess();
         ArrayList<Event> missedEvents = new ArrayList<Event>();
         for(int i = 0; i < client.missedEvents.size(); i++) {
             Event event = client.missedEvents.get(i);
@@ -90,6 +89,7 @@ public class ClientHandler implements Runnable{
         }
         NotifyPacket packet = new NotifyPacket(missedEvents, client.missedAds);
         client.clearMissed();
+        client.unlockClient();
         return packet;
     }
 
