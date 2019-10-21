@@ -32,7 +32,7 @@ public class BrokerCLI implements Runnable{
                     this.broker.topicsMutex.acquire();
                     System.out.println("The following topics are available:");
                     for( Topic topic : this.broker.topics ){
-                        System.out.println( topic );
+                        printTopic(topic);
                     }
                     this.broker.topicsMutex.release();
                 }catch( InterruptedException e ){
