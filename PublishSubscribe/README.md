@@ -8,16 +8,16 @@ This is a publish-subscribe system implemented in Java for the class CSCI-251 at
 
 ## Running the manager
 
-./runBroker
+`./runBroker`
 
 ## Running a pub/sub client
 
-java pubsub.Client
+`java pubsub.Client`
 
 
 ## Using command line interface
 
-to show all commands: 
+to show all commands in either cli: 
 
 `help`
 
