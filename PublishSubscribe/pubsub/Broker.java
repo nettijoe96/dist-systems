@@ -116,7 +116,9 @@ public class Broker{
     addEvent
 
     adds new topic to topics ArrayList
-    @param topic
+    there needs to be some client mutex locking to stop the possibility of losing some updates in an untimely notify
+    @param current client 
+    @param event 
     */
     public void addEvent(Event event, ClientData currClient) {
         Topic topic = event.topic;
@@ -158,6 +160,8 @@ public class Broker{
     addTopic
 
     adds new topic to topics ArrayList
+    there needs to be some client mutex locking to stop the possibility of losing some updates in an untimely notify
+    @param current client 
     @param topic
     */
     public void addTopic(Topic topic, ClientData currClient) {
@@ -180,8 +184,11 @@ public class Broker{
     } 
 
     /*
-    subscribe
-    
+    *subscribe
+
+    *client subscribes to a topic
+    @param topic  
+    @param client 
     */
     public void subscribe(Topic topic, ClientData client) {
         if(topicExists(topic)) {
@@ -196,7 +203,10 @@ public class Broker{
 
     /*
     * unsubscribe
+    * client unsubscribes to a topic
 
+    @param topic 
+    @param client 
     */
     public void unsubscribe(Topic topic, ClientData client) {
         if(topicExists(topic)) {
@@ -210,6 +220,12 @@ public class Broker{
         }
     }
 
+    /*
+    * getTopicByName
+
+    @param name of topic
+    @return returns topic by name; null if doesn't exist
+    */
     public Topic getTopicByName( String topicName ){
         try{
             this.topicsMutex.acquire();
@@ -228,7 +244,12 @@ public class Broker{
         return null;
     }
 
-	
+
+    /*
+    main function of pub/sub manager
+
+    create new broker object and starts it.
+    */	
     public static void main(String[] args) {
         try {
             Broker broker = new Broker();

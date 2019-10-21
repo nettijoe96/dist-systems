@@ -23,10 +23,15 @@ public class ClientHandler implements Runnable{
         this.globals = new Globals();
     }
 
+
+    /*
+    processes packets from the client. 
+    if there are missed events, send notify packet
+    closes connection with a close packet
+    */
     public void run() {
 
         try{
-            // Get the first packet (Should be a connect packet)
             ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
             ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
             Packet packet = (Packet) in.readObject();
@@ -76,7 +81,13 @@ public class ClientHandler implements Runnable{
 
 
 
+    /*
+    creates a notify packet consisting of missedEvents and missedAds. 
+    locks client to ensure that no new events are lost when we clearMissed   
 
+    @param client
+    @return notifypacket
+    */
     private NotifyPacket sendNotify(ClientData client) {
         boolean access = client.waitTillAccess();
         ArrayList<Event> missedEvents = new ArrayList<Event>();
@@ -130,31 +141,48 @@ public class ClientHandler implements Runnable{
 
     }
 
+    /*
+    invokeSubscribe 
+    calls subscribe on client and broker
+
+    @param client
+    @param subscribePacket
+    */
     private void invokeSubscribe( SubscribePacket subscribePacket, ClientData client ) {
         Topic topic = subscribePacket.getTopic();
         // Check with listener if this is a valid topic
-        if( listener.broker.topicExists( topic ) ) {     //TODO: switch to topicExists
+        if( listener.broker.topicExists( topic ) ) {   
             client.addSubscription(topic);
             listener.broker.subscribe(topic, client);
         }
 
-        // Right now there is no failure suback
-        // TODO differentiate between a successful suback and a failure
-        //SubackPacket subackPacket = new SubackPacket();
-        //return subackPacket;
     }
 
 
+    /*
+    invokeUnsubscribe 
+    calls unsubscribe on client and broker
+
+    @param client
+    @param unsubscribePacket
+    */
     private void invokeUnsubscribe( UnsubscribePacket unsubscribePacket, ClientData client ) {
         Topic topic = unsubscribePacket.getTopic();
         // Check with listener if this is a valid topic
-        if( listener.broker.topicExists( topic ) ) {     //TODO: switch to topicExists
+        if( listener.broker.topicExists( topic ) ) {   
             client.removeSubscription(topic);
             listener.broker.unsubscribe(topic, client);
         }
     }
 
 
+    /*
+    invokePublish 
+    calls subscribe on client and broker
+
+    @param client
+    @param publishPacket
+    */
     private void invokePublish( PublishPacket publishPacket, ClientData client ) {
         Event event = publishPacket.event;
         Topic topic = event.topic;
@@ -166,7 +194,10 @@ public class ClientHandler implements Runnable{
 
 
     /*
-    * advertise
+    * invokeAdvertise
+    * adds new topic to broker (who will notify all clients)
+    * @param: client
+    * @param: packet
     */ 
     private void invokeAdvertise ( AdvertisePacket packet, ClientData client) {
         Topic topic = packet.topic;
@@ -176,8 +207,10 @@ public class ClientHandler implements Runnable{
 
 
     /*
-     * connect
-     */
+    invokeConnect 
+    
+    @return connack packet
+    */
     private Packet invokeConnect( ConnectPacket connectPacket, ClientData client) { 
         return new ConnackPacket( connectPacket, client.id);
     } 

@@ -37,7 +37,6 @@ public class Client {
        init();
     }
 
-
     private void init() {
        this.globals = new Globals();        
        this.ads = new ArrayList<String>();
@@ -47,6 +46,12 @@ public class Client {
        this.socketMutex = new Semaphore(1);
     }
 
+    
+    /*
+    processNotify
+    processes a notify packet. This is called at the end of callmanager when a notify packet is received  
+    @param notifyPacket
+    */
     private void processNotify(NotifyPacket packet) {
         for(int i = 0; i < packet.events.size(); i++) {
             Event event = packet.events.get(i);
@@ -60,7 +65,10 @@ public class Client {
         }
     }
 
-   
+    /*
+    subscribes to a topic if it exists
+    @param topic name
+    */
     private void subscribe(String name) {
         if(topicExists(name)) {
             Topic topic = getTopicByName(name);
@@ -73,11 +81,26 @@ public class Client {
     }
 
 
+    /*
+    unsubscribes to a topic
+    @param topic name
+    */
     private void unsubscribe(String name) {
         subscriptions.remove(name);
     }
 
 
+    /*
+    callManager
+    
+    a general function for processing all communications with manager/broker, 
+    whether those communications get initiated in heartbeat or in clientcli
+
+    at the end we process notify messages if the exist
+   
+    @param: calltype string
+    @param: general input
+    */
     public <InputType> void callManager(String callType, InputType input) {
     
         Globals globals = new Globals();
@@ -171,11 +194,16 @@ public class Client {
         }
 
 
+         
+        /*
+        every 5 seconds we try to acquire access to client and send a connect heartbeat messsage 
+        in the hope of getting a notify back in response from the server/broker
+        */
         public void run() {
            
             while(true) {
                 try {
-                    sleep(5000); //30 seconds
+                    sleep(10000); //5 seconds
                     if(client.checkAccess()) { 
                         client.waitTillAccess(); 
                         client.callManager(globals.CONNECT, "");        
@@ -204,23 +232,30 @@ public class Client {
    
 
 
-    public static void main(String[] args) {
-        Client client = new Client();     //TODO: allow for cmd args or file processing to determine if client already has a deviceId from being run before. If so, use Client(deviceUUId) constructor
-        Globals globals = new Globals();     
-        client.callManager(globals.INITIALCONNECT, "");        
-        client.startCLI();
-        client.startHeartbeat();
-    }
+    /*
+    finds topic
 
-
+    @param: name
+    @return: topic
+    */
     public Topic getTopicByName( String topicName ){
         return nameTopic.get(topicName);
     }
 
+    /*
+    finds if topic exists
+
+    @param: topic name
+    @return: boolean
+    */
     public boolean topicExists(String topicName) {
         return nameTopic.get(topicName) != null; 
     }
 
+
+    /*
+    locks client, otherwise throws an error
+    */
     public void lockClient() throws InterruptedException {
         try {
             socketMutex.acquire();
@@ -230,10 +265,18 @@ public class Client {
         }
     }
 
+    /*
+    unlocks client
+    */
     public void unlockClient() {
         socketMutex.release();
     }
 
+
+    /*
+    checks if client is unlocked locked
+    @param: boolean
+    */
     public boolean checkAccess() {
         if(socketMutex.availablePermits() == 1) {
             return true;
@@ -243,6 +286,9 @@ public class Client {
         }
     }
 
+    /*
+    gets access when the client is free
+    */
     public boolean waitTillAccess() {
         while (true) {    //TODO: should have a timeout
             try { 
@@ -255,6 +301,20 @@ public class Client {
         } 
     }
 
+    /*
+    main client function. 
+
+    sends an initial connect
+    starts cli
+    start heartbeat
+    */
+    public static void main(String[] args) {
+        Client client = new Client();   
+        Globals globals = new Globals();     
+        client.callManager(globals.INITIALCONNECT, "");        
+        client.startCLI();
+        client.startHeartbeat();
+    }
 }
 
 

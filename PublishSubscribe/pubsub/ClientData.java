@@ -16,7 +16,6 @@ class ClientData {
     public ArrayList<Event> missedEvents;
     public HashMap<String, Boolean> subscribeDict;
     private Semaphore clientMutex;
-    //TODO: add dictionary for easily keeping track of subscriptions/unsubscriptions topics
 
     ClientData(int id) {
         this.subscriptions = new ArrayList<String>();
@@ -27,20 +26,19 @@ class ClientData {
         this.id = id;
     }
 
-
-    public void setPacketToSend(Packet packet) {
-        this.packet = packet;
-    }
-
    
-    public Packet getPackToSend(Packet packet) {
-        return packet; 
-    }
-
+    /*
+    checks if a notify has to be done because the missed messages are > 0
+    
+    @return bool
+    */
     public boolean nonEmptyOutStream() {
         return this.missedAds.size() > 0 || this.missedEvents.size() > 0;  //at least one of the two queues are nonempty 
     }
 
+    /*
+    adds subscription to clients storage
+    */
     public void addSubscription( Topic topic ){
         if( this.subscribeDict.containsKey(topic.topic) != true ){
             subscriptions.add( topic.topic );
@@ -48,6 +46,9 @@ class ClientData {
         }
     }
 
+    /*
+    removes subscription in clients storage
+    */
     public void removeSubscription( Topic topic ){
         if( this.subscribeDict.get(topic.topic) == true ){
             subscriptions.remove( topic.topic );
@@ -56,6 +57,9 @@ class ClientData {
     }
 
 
+    /*
+    trys to lock client and throws and exception if it cannot.
+    */
     public void lockClient() throws InterruptedException {
         try {
             clientMutex.acquire();
@@ -65,10 +69,17 @@ class ClientData {
         }
     }
 
+    /*
+    unlocks client
+    */
     public void unlockClient() {
         clientMutex.release();
     }
 
+    /*
+    checks if client is unlocked locked
+    @param: boolean
+    */
     public boolean checkAccess() {
         if(clientMutex.availablePermits() == 1) {
             return true;
@@ -78,19 +89,30 @@ class ClientData {
         }
     }
 
+    /*
+    checks if client is subscribed
+    @param: boolean
+    */
     public boolean isSubscribed(Topic topic) {
         return subscribeDict.get(topic.topic);
     }
 
 
+    /*
+    clears missed events
+    */
     public void clearMissed() {
         this.missedEvents = new ArrayList<Event>();
         this.missedAds = new ArrayList<Topic>();
     }
 
-
+  
+   
+    /*
+    gets access when the client is free
+    */
     public boolean waitTillAccess() {
-        while (true) {    //TODO: should have a timeout
+        while (true) {
             try { 
                 lockClient();
                 return true;

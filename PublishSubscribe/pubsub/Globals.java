@@ -28,10 +28,10 @@ public class Globals {
     static final String EVENT = "EVENT";
 
     static final String BROKER_HELP = "The following commands are available:\n" +
-        LIST_TOPICS + "\n" +
+        "topics \n" +
         "event [topic] [event name]  \n" +  
         "subscription [topic] \n" +  
-        HELP_COMMAND + "\n";
+        "help \n";
     
     static final String CLIENT_HELP = "The following commands are available:\n" +
         "advertise [topic name] [topic description] \n" +

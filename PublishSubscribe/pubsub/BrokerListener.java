@@ -27,7 +27,6 @@ public class BrokerListener implements Runnable{
         this.broker = broker;
 
         try{
-//            this.serverSocket = new ServerSocket(this.globals.BROKER_PORT, this.globals.serverConnectionBacklog, InetAddress.getByName(this.globals.BROKER_IP)); //TODO: this ip might not be needed once we have docker cont on that address
             this.serverSocket = new ServerSocket(this.globals.BROKER_PORT);
 
         } catch( UnknownHostException e ){
@@ -40,13 +39,25 @@ public class BrokerListener implements Runnable{
 
 
 
+    /*
+    handlesocket
+    create clientHandler thread to handle new connection
 
+    @param: socket 
+    */
     private void handleSocket( Socket socket ){
         ClientHandler handler = new ClientHandler( socket, this );
         Thread handlerThread = new Thread(handler);
         handlerThread.start();
     }
 
+    /*
+    isTopicInList
+    checks if topic is in list
+
+    @param: topicName
+    @return bool on whether in list
+    */
     protected boolean isTopicInList( String topicName ){
         try{
             this.broker.topicsMutex.acquire();
@@ -67,6 +78,10 @@ public class BrokerListener implements Runnable{
         return false;
     }
 
+
+    /*
+    * for every new accept, create a new clientHandler thread
+    */
     public void run(){
 
         // Continually listens for new client connections and adds them

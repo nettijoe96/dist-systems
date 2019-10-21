@@ -17,10 +17,16 @@ public class ClientCLI implements Runnable{
         this.client = client;
     }
 
+    /*
+    notify user that their cmd was malformed
+    */ 
     private void printMalformed(){
         System.out.println("Malformed command. Type " + globals.HELP_COMMAND + " for help");
     }
 
+    /*
+    the loop for checking and processing client cmdline commands
+    */ 
     public void run() {
         System.out.println("Ready to accept commands");
         Scanner scanner = new Scanner( System.in );
@@ -162,12 +168,6 @@ public class ClientCLI implements Runnable{
                     continue;
                 }
             }
-            
-            //TOPIC a
-            //Event topic name 
-            
-            //TOPIC a
-            //Event topic name 
             else{
                 System.out.println("Command not understood. Enter " + globals.HELP_COMMAND +" for help.");
             }

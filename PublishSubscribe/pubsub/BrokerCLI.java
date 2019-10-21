@@ -16,6 +16,9 @@ public class BrokerCLI implements Runnable{
         this.broker = broker; 
     }
 
+    /*
+    the thread for processing broker command line input
+    */
     public void run() {
         Scanner scanner = new Scanner( System.in );
         scanning: while(true){
@@ -27,6 +30,7 @@ public class BrokerCLI implements Runnable{
             
             String command = tokens[0].toUpperCase();
 
+            //list topics
             if( command.equals( globals.LIST_TOPICS ) ){
                 try{
                     this.broker.topicsMutex.acquire();
@@ -88,6 +92,7 @@ public class BrokerCLI implements Runnable{
                     printMalformed();
                     continue;
                 }
+            //help command
             }else if( command.equals(globals.HELP_COMMAND) ) {
                 System.out.println(globals.BROKER_HELP);
             }else{
