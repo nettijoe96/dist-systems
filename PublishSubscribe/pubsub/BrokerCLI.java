@@ -71,8 +71,8 @@ public class BrokerCLI implements Runnable{
             else if( command.equals( globals.EVENT ) ){
                 String[] subtokens = userInput.split(" ", 3);
                 if( subtokens.length == 3 ){
-                    String topicName = tokens[1];
-                    String name = tokens[2];
+                    String topicName = subtokens[1];
+                    String name = subtokens[2];
                     Topic topic = this.broker.getTopicByName(topicName);
                     if(topic == null) {
                         System.out.println("no such topic exists");  
