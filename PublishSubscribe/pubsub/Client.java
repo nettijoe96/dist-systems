@@ -57,7 +57,13 @@ public class Client {
         for(int i = 0; i < packet.events.size(); i++) {
             Event event = packet.events.get(i);
             Topic topic = event.topic;
-            this.topicEvents.get(topic.topic).add(event);
+            
+            if( topicEvents.containsKey( topic.topic ) ){
+                this.topicEvents.get(topic.topic).add(event);
+            }else{
+                this.topicEvents.put( topic.topic, new ArrayList<Event>() );
+                this.topicEvents.get( topic.topic ).add( event );
+            }
         }
         for(int i = 0; i < packet.ads.size(); i++) {
             Topic topic = packet.ads.get(i);

@@ -124,11 +124,7 @@ public class ClientCLI implements Runnable{
             else if( command.equals( globals.SUBSCRIPTION ) ){
                 if( tokens.length == 2 ){
                     String topicName = tokens[1];
-                    Topic topic = this.client.getTopicByName(topicName);
-                    if(topic == null) {
-                        System.out.println("no such topic exists");  
-                    }
-                    ArrayList<Event> events = this.client.topicEvents.get(topic.topic);
+                    ArrayList<Event> events = this.client.topicEvents.get( topicName );
                     if( events == null ){
                         System.out.println( "No events to display in this topic" );
                     } else {
