@@ -38,6 +38,7 @@ public class ClientHandler implements Runnable{
             Packet response;
             ClientData client;
             try {
+                //TODO change this to use the clientid gotten from the connect packet
                 client = getOrMakeClient(packet.getDeviceId());  //get client
             }
             catch(IllegalArgumentException e) {

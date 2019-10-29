@@ -120,12 +120,13 @@ public class Client {
                 ConnackPacket connack = (ConnackPacket) in.readObject();
             }
             else if (callType.equals(globals.INITIALCONNECT)) {
-                ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
+                ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);
                 out.writeObject(connpacket);
                 System.out.println("Establishing connection");
                 ConnackPacket connack = (ConnackPacket) in.readObject();
                 this.id = connack.clientId;
                 System.out.println("Recieved connack, connection established");
+                System.out.println("Your UUID is " + this.id );
             }
             else if (callType.equals(globals.PUBLISH)) {
                 PublishPacket pubPacket = new PublishPacket((Event) input, this.id);       
@@ -310,14 +311,17 @@ public class Client {
     start heartbeat
     */
     public static void main(String[] args) {
+        Globals globals = new Globals();     
         if( args.length == 1){
             Client client = new Client( Integer.parseInt( args[0] ) );
-            Globals globals = new Globals();     
-            client.callManager(globals.INITIALCONNECT, "");        
+            client.callManager(globals.CONNECT, "");
             client.startCLI();
             client.startHeartbeat();
         }else{
-            System.out.println( "Must supply client ID as command line argument.");
+            Client client = new Client();
+            client.callManager(globals.INITIALCONNECT, "");        
+            client.startCLI();
+            client.startHeartbeat();
         }
     }
 }
