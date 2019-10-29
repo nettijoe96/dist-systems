@@ -34,6 +34,7 @@ public class Client {
 
     public Client(int id) {
        this.id = id;
+       System.out.println("Initialized client with UUID " + this.id );
        init();
     }
 
@@ -309,7 +310,7 @@ public class Client {
     start heartbeat
     */
     public static void main(String[] args) {
-        Client client = new Client();   
+        Client client = new Client( Integer.parseInt( args[0] ) );
         Globals globals = new Globals();     
         client.callManager(globals.INITIALCONNECT, "");        
         client.startCLI();
