@@ -128,14 +128,13 @@ public class ClientCLI implements Runnable{
                     if(topic == null) {
                         System.out.println("no such topic exists");  
                     }
-                    else if(this.client.subscriptions.contains(topic.topic)) {
-                        ArrayList<Event> events = this.client.topicEvents.get(topic.topic);
+                    ArrayList<Event> events = this.client.topicEvents.get(topic.topic);
+                    if( events == null ){
+                        System.out.println( "No events to display in this topic" );
+                    } else {
                         for(Event e: events) {
                             printEvent(e);
                         }
-                    }
-                    else {
-                        System.out.println("not subscribed");  
                     }
                 }else{
                     printMalformed();

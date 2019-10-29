@@ -310,11 +310,15 @@ public class Client {
     start heartbeat
     */
     public static void main(String[] args) {
-        Client client = new Client( Integer.parseInt( args[0] ) );
-        Globals globals = new Globals();     
-        client.callManager(globals.INITIALCONNECT, "");        
-        client.startCLI();
-        client.startHeartbeat();
+        if( args.length == 1){
+            Client client = new Client( Integer.parseInt( args[0] ) );
+            Globals globals = new Globals();     
+            client.callManager(globals.INITIALCONNECT, "");        
+            client.startCLI();
+            client.startHeartbeat();
+        }else{
+            System.out.println( "Must supply client ID as command line argument.");
+        }
     }
 }
 
