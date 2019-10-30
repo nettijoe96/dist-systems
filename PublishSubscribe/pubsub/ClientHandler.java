@@ -31,6 +31,7 @@ public class ClientHandler implements Runnable{
     */
     public void run() {
 
+
         try{
             ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
             ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
@@ -46,6 +47,9 @@ public class ClientHandler implements Runnable{
                 return;
             }
       
+           client.cachedIP = socket.getInetAddress().getHostAddress(); 
+           client.cachedPort = socket.getPort(); 
+ 
             if( packet.getPacketType().equals(this.globals.CONNECT) ){        // connect
                 ConnectPacket connectPacket = (ConnectPacket) packet;
                 // Get your connack after processing the connect packet
@@ -75,7 +79,11 @@ public class ClientHandler implements Runnable{
             e.printStackTrace();
         } catch(ClassNotFoundException e){
             e.printStackTrace();
+        } catch(InterruptedException e){
+            e.printStackTrace();
+        } finally {
         }
+         
 
     }
 
@@ -88,20 +96,25 @@ public class ClientHandler implements Runnable{
     @param client
     @return notifypacket
     */
-    private NotifyPacket sendNotify(ClientData client) {
-        boolean access = client.waitTillAccess();
-        ArrayList<Event> missedEvents = new ArrayList<Event>();
-        for(int i = 0; i < client.missedEvents.size(); i++) {
-            Event event = client.missedEvents.get(i);
-            Topic topic = event.topic;
-            if(client.isSubscribed(topic)) {
-                missedEvents.add(event); 
+    private NotifyPacket sendNotify(ClientData client) throws InterruptedException {
+        try {
+            client.lockClient();
+            ArrayList<Event> missedEvents = new ArrayList<Event>();
+            for(int i = 0; i < client.missedEvents.size(); i++) {
+                Event event = client.missedEvents.get(i);
+                Topic topic = event.topic;
+                if(client.isSubscribed(topic)) {
+                    missedEvents.add(event); 
+                }
             }
+            NotifyPacket packet = new NotifyPacket(missedEvents, client.missedAds);
+            client.clearMissed();
+            client.unlockClient();
+            return packet;
         }
-        NotifyPacket packet = new NotifyPacket(missedEvents, client.missedAds);
-        client.clearMissed();
-        client.unlockClient();
-        return packet;
+        catch (InterruptedException e) {
+            throw e;
+        } 
     }
 
 

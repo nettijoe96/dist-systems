@@ -9,6 +9,7 @@ package pubsub;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.lang.ClassNotFoundException;
@@ -53,6 +54,7 @@ public class Client {
     @param notifyPacket
     */
     private void processNotify(NotifyPacket packet) {
+        lockClient();
         for(int i = 0; i < packet.events.size(); i++) {
             Event event = packet.events.get(i);
             Topic topic = event.topic;
@@ -63,6 +65,7 @@ public class Client {
             this.ads.add(topic.topic);
             this.nameTopic.put(topic.topic, topic);
         }
+        unlockClient();
     }
 
     /*
@@ -124,6 +127,7 @@ public class Client {
                 System.out.println("Establishing connection");
                 ConnackPacket connack = (ConnackPacket) in.readObject();
                 this.id = connack.clientId;
+                startListener();
                 System.out.println("Recieved connack, connection established");
             }
             else if (callType.equals(globals.PUBLISH)) {
@@ -147,7 +151,9 @@ public class Client {
             }
                         
  
+            System.out.println("before packet");
             Packet packet = (Packet) in.readObject();  //either a close packet or a notify packet
+            System.out.println("after packet");
             if (packet instanceof NotifyPacket) {
                 processNotify((NotifyPacket) packet);
                 packet = (Packet) in.readObject();     //close packet
@@ -175,50 +181,40 @@ public class Client {
     }
 
 
-    /*
-    * creates a new thread for heartbeat
-    */
-    public void startHeartbeat() {
-        Heartbeat hb = new Heartbeat(this);
-        hb.start(); 
+    public void startListener() {
+        Listener listener = new Listener();
+        listener.start(); 
     }
 
-    private class Heartbeat extends Thread {
+    private class Listener extends Thread {
        
         Globals globals; 
-        Client client;
   
-        Heartbeat(Client client) {
+        Listener() {
             this.globals = new Globals();
-            this.client = client;
         }
 
-
          
-        /*
-        every 5 seconds we try to acquire access to client and send a connect heartbeat messsage 
-        in the hope of getting a notify back in response from the server/broker
-        */
         public void run() {
-           
-            while(true) {
-                try {
-                    sleep(10000); //5 seconds
-                    if(client.checkAccess()) { 
-                        client.waitTillAccess(); 
-                        client.callManager(globals.CONNECT, "");        
-                        client.unlockClient();
-                    }
+            try {
+                ServerSocket serverSocket = new ServerSocket(getLocalPort());
+                while (true) {
+                    Socket socket = serverSocket.accept();
+                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                    Packet packet = (Packet) in.readObject();  //either a close packet or a notify packet
+                    System.out.println("in notify listener");
+                    processNotify((NotifyPacket) packet);
+                    socket.close();
                 }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-     
+            } 
+            catch (IOException e) {
+                e.printStackTrace();
             }
- 
-        } 
-        
-    }
+            catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    } 
 
 
     /*
@@ -230,7 +226,9 @@ public class Client {
         cliThread.start(); 
     }
    
-
+    private int getLocalPort() {
+        return globals.startingPort + id;
+    } 
 
     /*
     finds topic
@@ -256,12 +254,12 @@ public class Client {
     /*
     locks client, otherwise throws an error
     */
-    public void lockClient() throws InterruptedException {
+    public void lockClient() {
         try {
             socketMutex.acquire();
         }
         catch (InterruptedException e) {
-            throw e;
+            e.printStackTrace();
         }
     }
 
@@ -272,7 +270,7 @@ public class Client {
         socketMutex.release();
     }
 
-
+   
     /*
     checks if client is unlocked locked
     @param: boolean
@@ -288,7 +286,6 @@ public class Client {
 
     /*
     gets access when the client is free
-    */
     public boolean waitTillAccess() {
         while (true) {    //TODO: should have a timeout
             try { 
@@ -300,6 +297,7 @@ public class Client {
             }
         } 
     }
+    */
 
     /*
     main client function. 
@@ -313,7 +311,6 @@ public class Client {
         Globals globals = new Globals();     
         client.callManager(globals.INITIALCONNECT, "");        
         client.startCLI();
-        client.startHeartbeat();
     }
 }
 

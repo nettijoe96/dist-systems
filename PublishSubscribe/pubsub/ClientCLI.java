@@ -39,7 +39,7 @@ public class ClientCLI implements Runnable{
             
             String command = tokens[0].toUpperCase();
 
-            this.client.waitTillAccess();
+            this.client.lockClient();
             //ADVERTISE
             if( command.equals( globals.ADVERTISE ) ){
                 String[] subTokens = tokens[1].split(" ", 2);

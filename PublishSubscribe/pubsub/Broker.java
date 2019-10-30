@@ -127,14 +127,7 @@ public class Broker{
             ArrayList<ClientData> subscribers = this.subscriptions.get(topic.topic);
             for(int i = 0; i < subscribers.size(); i++) {
                 ClientData client = subscribers.get(i);
-                if(client.id != currClient.id) {
-                    client.waitTillAccess();   //TODO: this is a naive way of doing it because one problem thing can being it to a standstill
-                    client.missedEvents.add(event);
-                    client.unlockClient();
-                }
-                else {
-                    client.missedEvents.add(event);
-                }
+                client.notifyEvent(event);
             }
         }
          
@@ -171,14 +164,7 @@ public class Broker{
             topicEvents.put(topic.topic, new ArrayList<Event>());
             for(int i = 0; i < clients.size(); i++) {
                 ClientData client = clients.get(i);
-                if(client.id != currClient.id) {
-                    client.waitTillAccess();   //TODO: this is a naive way of doing it because one problem thing can bring it to a standstill
-                    client.missedAds.add(topic);
-                    client.unlockClient();
-                }
-                else {
-                    client.missedAds.add(topic);
-                }
+                client.notifyTopic(topic);
             }
         }
     } 

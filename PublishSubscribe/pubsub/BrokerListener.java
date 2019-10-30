@@ -82,17 +82,14 @@ public class BrokerListener implements Runnable{
     /*
     * for every new accept, create a new clientHandler thread
     */
-    public void run(){
+    public void run() {
 
         // Continually listens for new client connections and adds them
         while(true){
-
             try{
                 Socket socket;
                 socket = this.serverSocket.accept();
-
-                handleSocket( socket );
-                                
+                handleSocket(socket);
             }catch( Exception e ){
                 e.printStackTrace();
             }
