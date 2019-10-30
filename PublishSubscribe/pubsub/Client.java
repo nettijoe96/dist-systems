@@ -35,6 +35,7 @@ public class Client {
 
     public Client(int id) {
        this.id = id;
+       System.out.println("Initialized client with UUID " + this.id );
        init();
     }
 
@@ -58,7 +59,13 @@ public class Client {
         for(int i = 0; i < packet.events.size(); i++) {
             Event event = packet.events.get(i);
             Topic topic = event.topic;
-            this.topicEvents.get(topic.topic).add(event);
+            
+            if( topicEvents.containsKey( topic.topic ) ){
+                this.topicEvents.get(topic.topic).add(event);
+            }else{
+                this.topicEvents.put( topic.topic, new ArrayList<Event>() );
+                this.topicEvents.get( topic.topic ).add( event );
+            }
         }
         for(int i = 0; i < packet.ads.size(); i++) {
             Topic topic = packet.ads.get(i);
@@ -122,13 +129,14 @@ public class Client {
                 ConnackPacket connack = (ConnackPacket) in.readObject();
             }
             else if (callType.equals(globals.INITIALCONNECT)) {
-                ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);       
+                ConnectPacket connpacket = new ConnectPacket(this.globals.CONNECT, this.globals.initDeviceId);
                 out.writeObject(connpacket);
                 System.out.println("Establishing connection");
                 ConnackPacket connack = (ConnackPacket) in.readObject();
                 this.id = connack.clientId;
                 startListener();
                 System.out.println("Recieved connack, connection established");
+                System.out.println("Your UUID is " + this.id );
             }
             else if (callType.equals(globals.PUBLISH)) {
                 PublishPacket pubPacket = new PublishPacket((Event) input, this.id);       
@@ -285,21 +293,6 @@ public class Client {
     }
 
     /*
-    gets access when the client is free
-    public boolean waitTillAccess() {
-        while (true) {    //TODO: should have a timeout
-            try { 
-                lockClient();
-                return true;
-            }
-            catch (InterruptedException e) {
-                continue;
-            }
-        } 
-    }
-    */
-
-    /*
     main client function. 
 
     sends an initial connect
@@ -307,10 +300,19 @@ public class Client {
     start heartbeat
     */
     public static void main(String[] args) {
-        Client client = new Client();   
         Globals globals = new Globals();     
-        client.callManager(globals.INITIALCONNECT, "");        
-        client.startCLI();
+
+        if( args.length == 1){
+            Client client = new Client( Integer.parseInt( args[0] ) );
+            client.callManager(globals.CONNECT, "");
+            client.startCLI();
+            client.startHeartbeat();
+        }else{
+            Client client = new Client();
+            client.callManager(globals.INITIALCONNECT, "");        
+            client.startCLI();
+            client.startHeartbeat();
+        }
     }
 }
 
