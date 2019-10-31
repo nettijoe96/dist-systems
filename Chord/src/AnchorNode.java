@@ -1,7 +1,7 @@
 import java.rmi.server.*;
 import java.rmi.*;
 
-public class AnchorNode extends UnicastRemoteObject implements AnchorNodeStub{
+public class AnchorNode {
 
     public AnchorNode() throws RemoteException{
     }
