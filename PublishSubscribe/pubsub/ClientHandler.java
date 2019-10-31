@@ -39,7 +39,6 @@ public class ClientHandler implements Runnable{
             Packet response;
             ClientData client;
             try {
-                //TODO change this to use the clientid gotten from the connect packet
                 client = getOrMakeClient(packet.getDeviceId());  //get client
             }
             catch(IllegalArgumentException e) {
@@ -82,7 +81,6 @@ public class ClientHandler implements Runnable{
             e.printStackTrace();
         } catch(InterruptedException e){
             e.printStackTrace();
-        } finally {
         }
          
 
@@ -110,12 +108,14 @@ public class ClientHandler implements Runnable{
             }
             NotifyPacket packet = new NotifyPacket(missedEvents, client.missedAds);
             client.clearMissed();
-            client.unlockClient();
             return packet;
         }
         catch (InterruptedException e) {
             throw e;
         } 
+        finally {
+            client.unlockClient();
+        }
     }
 
 

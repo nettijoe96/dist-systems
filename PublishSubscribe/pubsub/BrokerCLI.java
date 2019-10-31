@@ -53,7 +53,6 @@ public class BrokerCLI implements Runnable{
                         System.out.println("no such topic exists");  
                     }
                     else if(this.broker.topics.contains(topic)) {
-                        System.out.println("56 brokercli\n");
                         ArrayList<Event> events = this.broker.topicEvents.get(topic.topic);
                         for(Event e: events) {
                             printEvent(e);

@@ -86,7 +86,7 @@ public class Client {
             topicEvents.put(name, new ArrayList<Event>()); 
         }        
         else {
-            System.out.println(nameTopic);
+            System.out.println(name + "does not exist");
         }
     }
 
@@ -163,9 +163,7 @@ public class Client {
             }
                         
  
-            System.out.println("before packet");
             Packet packet = (Packet) in.readObject();  //either a close packet or a notify packet
-            System.out.println("after packet");
             if (packet instanceof NotifyPacket) {
                 processNotify((NotifyPacket) packet);
                 packet = (Packet) in.readObject();     //close packet
@@ -214,7 +212,6 @@ public class Client {
                     Socket socket = serverSocket.accept();
                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
                     Packet packet = (Packet) in.readObject();  //either a close packet or a notify packet
-                    System.out.println("in notify listener");
                     processNotify((NotifyPacket) packet);
                     socket.close();
                 }
@@ -311,12 +308,10 @@ public class Client {
             Client client = new Client( Integer.parseInt( args[0] ) );
             client.callManager(globals.CONNECT, "");
             client.startCLI();
-            client.startListener();
         }else{
             Client client = new Client();
             client.callManager(globals.INITIALCONNECT, "");        
             client.startCLI();
-            client.startListener();
         }
     }
 }
