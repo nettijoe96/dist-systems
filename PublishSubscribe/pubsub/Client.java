@@ -115,6 +115,10 @@ public class Client {
     
         Globals globals = new Globals();
         try {
+            System.out.println( "Attempting to connect to broker at\nIP:\t" +
+                    this.globals.BROKER_IP +
+                    "\nPORT:\t" +
+                    Integer.toString( this.globals.BROKER_PORT ) );
             Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -232,6 +236,7 @@ public class Client {
     }
    
     private int getLocalPort() {
+        System.out.println("This client is using port " + Integer.toString( globals.startingPort + id ) );
         return globals.startingPort + id;
     } 
 
@@ -303,10 +308,18 @@ public class Client {
             Client client = new Client( Integer.parseInt( args[0] ) );
             client.callManager(globals.CONNECT, "");
             client.startCLI();
+<<<<<<< HEAD
+=======
+            client.startListener();
+>>>>>>> 80dfedd4043dbda0590c1ac395b95b6e9c74dae2
         }else{
             Client client = new Client();
             client.callManager(globals.INITIALCONNECT, "");        
             client.startCLI();
+<<<<<<< HEAD
+=======
+            client.startListener();
+>>>>>>> 80dfedd4043dbda0590c1ac395b95b6e9c74dae2
         }
     }
 }

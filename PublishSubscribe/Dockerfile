@@ -6,6 +6,7 @@ RUN apt-get -y install openjdk-11-jdk
 COPY build.sh /build.sh
 COPY clean.sh /clean.sh
 COPY pubsub/ /pubsub/
+COPY packet/ /packet/
 
 RUN /clean.sh
 RUN /build.sh

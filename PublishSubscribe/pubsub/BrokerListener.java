@@ -89,6 +89,7 @@ public class BrokerListener implements Runnable{
             try{
                 Socket socket;
                 socket = this.serverSocket.accept();
+                System.out.println( "New client connected" + socket );
                 handleSocket(socket);
             }catch( Exception e ){
                 e.printStackTrace();
