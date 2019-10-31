@@ -115,6 +115,10 @@ public class Client {
     
         Globals globals = new Globals();
         try {
+            System.out.println( "Attempting to connect to broker at\nIP:\t" +
+                    this.globals.BROKER_IP +
+                    "\nPORT:\t" +
+                    Integer.toString( this.globals.BROKER_PORT ) );
             Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
