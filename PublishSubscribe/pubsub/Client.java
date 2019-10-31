@@ -115,10 +115,6 @@ public class Client {
     
         Globals globals = new Globals();
         try {
-            System.out.println( "Attempting to connect to broker at\nIP:\t" +
-                    this.globals.BROKER_IP +
-                    "\nPORT:\t" +
-                    Integer.toString( this.globals.BROKER_PORT ) );
             Socket socket = new Socket(this.globals.BROKER_IP, this.globals.BROKER_PORT);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -308,6 +304,7 @@ public class Client {
             Client client = new Client( Integer.parseInt( args[0] ) );
             client.callManager(globals.CONNECT, "");
             client.startCLI();
+            client.startListener();
         }else{
             Client client = new Client();
             client.callManager(globals.INITIALCONNECT, "");        

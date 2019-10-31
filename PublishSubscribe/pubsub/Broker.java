@@ -21,8 +21,8 @@ public class Broker{
     static final int TIME_TO_HOLD = 10000;
 
     public ArrayList<Topic> topics = new ArrayList<>();
-    public Semaphore topicsMutex = new Semaphore(1);
     public ArrayList<Event> events = new ArrayList<>();
+    public Semaphore topicsMutex = new Semaphore(1);
     public Semaphore eventsMutex = new Semaphore(1);
     public ArrayList<ClientData> clients = new ArrayList<>();
     public HashMap<String, ArrayList<Event>> topicEvents = new HashMap<String, ArrayList<Event>>();
@@ -49,7 +49,6 @@ public class Broker{
             listenerThread.start();
             System.out.println("Broker Listener Started");
 
-            // Start a thread that will listen for CLI input  //TODO
             BrokerCLI cli = new BrokerCLI(this);
             Thread cliThread = new Thread(cli);
             cliThread.start();
@@ -180,9 +179,11 @@ public class Broker{
         if(topicExists(topic)) {
             ArrayList<ClientData> subscribedClients = subscriptions.get(topic.topic);
             subscribedClients.add(client);
+            client.lockClient();
             for(Event e : topicEvents.get(topic.topic)) {
                 client.missedEvents.add(e);
             }
+            client.unlockClient();
         }
     }
 
@@ -200,7 +201,9 @@ public class Broker{
             for(int i = 0; i < subscribedClients.size(); i++) {
                 ClientData c = subscribedClients.get(i);
                 if(c.id == client.id) {
+                    c.lockClient();
                     subscribedClients.remove(i);
+                    c.unlockClient();
                 }
             }
         }

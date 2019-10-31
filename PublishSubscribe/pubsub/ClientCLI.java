@@ -39,7 +39,6 @@ public class ClientCLI implements Runnable{
             
             String command = tokens[0].toUpperCase();
 
-            this.client.lockClient();
             //ADVERTISE
             if( command.equals( globals.ADVERTISE ) ){
                 String[] subTokens = tokens[1].split(" ", 2);
@@ -167,7 +166,6 @@ public class ClientCLI implements Runnable{
                 System.out.println("Command not understood. Enter " + globals.HELP_COMMAND +" for help.");
             }
            
-            client.unlockClient();
         
         }
     }
