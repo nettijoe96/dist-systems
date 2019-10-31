@@ -74,7 +74,6 @@ public class ClientHandler implements Runnable{
             }
             ClosePacket c = new ClosePacket();
             out.writeObject(c); 
-
         } catch(IOException e){
             e.printStackTrace();
         } catch(ClassNotFoundException e){
@@ -110,9 +109,6 @@ public class ClientHandler implements Runnable{
             client.clearMissed();
             return packet;
         }
-        catch (InterruptedException e) {
-            throw e;
-        } 
         finally {
             client.unlockClient();
         }

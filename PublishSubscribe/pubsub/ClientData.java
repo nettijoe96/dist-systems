@@ -70,12 +70,12 @@ class ClientData {
     /*
     trys to lock client and throws and exception if it cannot.
     */
-    public void lockClient() throws InterruptedException {
+    public void lockClient() {
         try {
             clientMutex.acquire();
         }
         catch (InterruptedException e) {
-            throw e;
+            e.printStackTrace();
         }
     }
 
@@ -156,9 +156,6 @@ class ClientData {
                 e.printStackTrace();
             }
             catch (IOException e) {
-                e.printStackTrace();
-            }
-            catch (InterruptedException e) {
                 e.printStackTrace();
             }
             finally {
