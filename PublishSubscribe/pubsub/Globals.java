@@ -6,7 +6,7 @@ public class Globals {
 //    static final String BROKER_IP = "172.10.0.2";      
     public static final String BROKER_IP = "127.17.0.1";      
     public static final int initDeviceId = 0;
-    public static final int startingPort = 40000;
+    public static final int startingPort = 50000;
     public static final int serverConnectionBacklog = 100;
 
         // Constants denoting certain types

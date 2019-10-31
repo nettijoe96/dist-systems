@@ -235,6 +235,7 @@ public class Client {
     }
    
     private int getLocalPort() {
+        System.out.println("This client is using port " + Integer.toString( globals.startingPort + id ) );
         return globals.startingPort + id;
     } 
 
@@ -306,12 +307,12 @@ public class Client {
             Client client = new Client( Integer.parseInt( args[0] ) );
             client.callManager(globals.CONNECT, "");
             client.startCLI();
-            client.startHeartbeat();
+            client.startListener();
         }else{
             Client client = new Client();
             client.callManager(globals.INITIALCONNECT, "");        
             client.startCLI();
-            client.startHeartbeat();
+            client.startListener();
         }
     }
 }
