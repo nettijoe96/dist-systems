@@ -308,18 +308,10 @@ public class Client {
             Client client = new Client( Integer.parseInt( args[0] ) );
             client.callManager(globals.CONNECT, "");
             client.startCLI();
-<<<<<<< HEAD
-=======
-            client.startListener();
->>>>>>> 80dfedd4043dbda0590c1ac395b95b6e9c74dae2
         }else{
             Client client = new Client();
             client.callManager(globals.INITIALCONNECT, "");        
             client.startCLI();
-<<<<<<< HEAD
-=======
-            client.startListener();
->>>>>>> 80dfedd4043dbda0590c1ac395b95b6e9c74dae2
         }
     }
 }
