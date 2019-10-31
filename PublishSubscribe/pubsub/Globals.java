@@ -37,16 +37,14 @@ public class Globals {
         "advertise [topic name] [topic description] \n" +
         "publish [topic] [event name] [event payload]\n" +
         "subscribe [topic]\n" +
-        "unsubscribe [topic]\n" +
+        "unsubscribe [topic]\n\n" +
 
-        "\n show information commands: \n" + 
-        "subscriptions \n" +  
+        "show information commands: \n" + 
+     //   "subscriptions \n" +  
         "subscription [topic] \n" +  
         "topics \n" +  
         "event [topic] [event name]  \n" +  
-
-        
-        "\n help";
+        "help \n";
 
 
 

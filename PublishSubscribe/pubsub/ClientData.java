@@ -137,13 +137,10 @@ class ClientData {
         public void run() {
             try {
                 lockClient();
-                System.out.println(cachedIP);
-                System.out.println(getClientPort());
                 Socket socket = new Socket(cachedIP, getClientPort());   
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 out.writeObject(this.packet);
                 socket.close();
-                unlockClient();
             }
             catch(ConnectException e) {
                 for(int i = 0; i < packet.events.size(); i++) {
@@ -154,7 +151,6 @@ class ClientData {
                     Topic topic = packet.ads.get(i);
                     missedAds.add(topic);
                 }
-                
             }
             catch (UnknownHostException e) {
                 e.printStackTrace();
@@ -165,6 +161,10 @@ class ClientData {
             catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            finally {
+                unlockClient();
+            }
+
         }
         
     }
