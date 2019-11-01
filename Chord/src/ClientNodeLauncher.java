@@ -6,7 +6,7 @@ public class ClientNodeLauncher{
         Thread nodeThread = new Thread( node );
         nodeThread.start();
 
-        CLI cli = new CLI();
+        CLI cli = new CLI( node );
         Thread cliThread = new Thread( cli );
         cliThread.start();
     }

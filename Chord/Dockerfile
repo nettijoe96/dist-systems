@@ -7,3 +7,4 @@ COPY src/ /src/
 
 RUN javac src/*.java
 
+RUN echo java src.ClientNodeLauncher [uuid]

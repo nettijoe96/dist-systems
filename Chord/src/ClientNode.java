@@ -3,6 +3,9 @@ package src;
  * Don't put anything in here that the anchor node will also have to do
  */
 
+import java.net.*;
+import java.io.*;
+
 public class ClientNode extends Node{
 
     public ClientNode( Integer uuid ){
