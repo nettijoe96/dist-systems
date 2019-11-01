@@ -1,9 +1,14 @@
-import java.rmi.server.*;
-import java.rmi.*;
+package src;
 
-public class AnchorNode {
+import java.util.*;
 
-    public AnchorNode() throws RemoteException{
+public class AnchorNode extends Node{
+    private HashMap<Integer, String> nodeTable;
+
+
+
+    public AnchorNode(){
+        super( 0 );
     }
 
 }
