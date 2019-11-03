@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
-sudo docker build -t client:latest .
-
-sudo docker run -it client
+uuid=$1
+docker run -it --net chord-20-net chord-20:client java src.Client $uuid

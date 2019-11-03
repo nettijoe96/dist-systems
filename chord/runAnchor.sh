@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-java src.AnchorNodeLauncher
+anchorIP="172.10.0.2"
+docker run -it --net chord-20-net --ip $anchorIP chord-20:anchor java src.Anchor
+

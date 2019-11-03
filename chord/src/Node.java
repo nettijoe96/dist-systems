@@ -46,20 +46,6 @@ abstract class Node implements Runnable{
 
     }
 
-    public void testConnection(){
-        try{
-            Socket socket = new Socket( this.globals.ANCHOR_IP, this.globals.PORT);
-            ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
-            ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
-            out.writeObject( "Hello World" );
-            System.out.println( (String) in.readObject() );
-            socket.close();
-        }catch( Exception e ){
-            e.printStackTrace();
-        }
-    }
-
-
     public void run(){
         while( true ){
             try{
