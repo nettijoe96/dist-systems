@@ -7,5 +7,6 @@ public class Globals {
     public static final int RING_SPACE_SIZE = 16;
     public static final String CONNECT = "connect";
     public static final String DELIMITER = ";";
-
+    public static final int rows = 4;
+    public static final int ringSize = 16;
 }
