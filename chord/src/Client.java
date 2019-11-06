@@ -30,10 +30,14 @@ public class Client extends Node {
     public void testConnection(){
         try{
             Socket socket = new Socket( this.globals.ANCHOR_IP, this.globals.PORT);
-            ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
-            ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
-            out.writeObject( "Hello World" );
-            System.out.println( (String) in.readObject() );
+            PrintWriter out = new PrintWriter(  socket.getOutputStream(), true );
+            BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
+            out.println( this.globals.CONNECT +
+                   this.globals.DELIMITER +
+                   Integer.toString( this.uuid ) );
+            System.out.println( (String) in.readLine() );
+            out.close();
+            in.close();
             socket.close();
         }catch( Exception e ){
             e.printStackTrace();

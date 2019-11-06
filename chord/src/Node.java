@@ -44,6 +44,7 @@ abstract class Node implements Runnable{
         //Logic to decide where to pass it?
         //Need a structure for calls?
 
+        System.out.println( call );
     }
 
     public void run(){
