@@ -44,7 +44,17 @@ abstract class Node implements Runnable{
         //Logic to decide where to pass it?
         //Need a structure for calls?
 
-        System.out.println( call );
+        String[] split = call.split(this.globals.DELIMITER); 
+
+        String command = split[0];
+
+        if( command.equals( this.globals.CONNECT ) ){
+            System.out.println( "TODO: implement connect");
+            // add to table and return an IP
+        }else{
+            System.out.println( "Unimplemented command" );
+            System.out.println( command );
+        }
     }
 
     public void run(){
@@ -56,7 +66,7 @@ abstract class Node implements Runnable{
                 PrintWriter out = new PrintWriter( socket.getOutputStream(), true );
                 String message = in.readLine();
 
-                System.out.println( message );
+                callManager( message );
                 out.println( "ACK" );
 
                 in.close();
