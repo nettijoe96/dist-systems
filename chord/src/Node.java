@@ -52,18 +52,18 @@ abstract class Node implements Runnable{
             try{
                 Socket socket = this.serverSocket.accept();
 
-                ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
-                ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
+                BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
+                PrintWriter out = new PrintWriter( socket.getOutputStream(), true );
+                String message = in.readLine();
 
-                System.out.println( (String) in.readObject() );
-                out.writeObject( "ACK" );
+                System.out.println( message );
+                out.println( "ACK" );
 
+                in.close();
+                out.close();
                 socket.close();
             }catch( IOException e ){
                 System.out.println( "Error while client connecting." );
-                e.printStackTrace();
-            }catch( ClassNotFoundException e ){
-                System.out.println( "Malformed message from client." );
                 e.printStackTrace();
             }
         }
