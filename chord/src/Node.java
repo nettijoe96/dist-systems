@@ -40,6 +40,8 @@ abstract class Node implements Runnable{
 
     }
 
+    abstract void printTable();
+
     public void callManager( String call ){
         //Logic to decide where to pass it?
         //Need a structure for calls?

@@ -20,4 +20,6 @@ public class Globals {
     //connect
     public static final String Connect = "CONNECT";
 
+    // CLI commands
+    public static final String PRINT_TABLE = "print-table";
 }
