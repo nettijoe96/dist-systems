@@ -10,30 +10,25 @@ class FingerTable {
     
     private int rows;
     private int ringSize;
-    public int[][] fingerTable;  
     private Globals globals;
     private int myUUID;
+    public FingerTableEntry[] fingerTableEntries;
 
     FingerTable(int myUUID) {
         this.myUUID = myUUID;
         this.globals = new Globals();
         this.rows = this.globals.rows;
         this.ringSize = globals.ringSize;
-        this.fingerTable = new int[this.rows][2];
+        this.fingerTableEntries = new FingerTableEntry[this.rows];
     }
 
-    /*
-    initiazes the 2^i + uuid column of the finger table. 
-    */
-    private void initFingerTable() {
-        for(int i = 0; i < this.rows; i++) {
-            this.fingerTable[i][0] = ((int)Math.pow(2, i) + this.myUUID) % this.ringSize;
-        } 
-    } 
-
-    
     public void processNodeTable(HashMap<Integer, String> nodeTable) {
         
+        for( int i = 0; i < this.rows; i++){
+            fingerTableEntries[i] = new FingerTableEntry( this.myUUID, i, nodeTable );
+        }
+
+        /*
         Integer[] keys = nodeTable.keySet().toArray(new Integer[0]);
         Arrays.sort(keys);
  
@@ -48,6 +43,7 @@ class FingerTable {
             }
             fingerTable[i][1] = successor;
         }
+        */
     }  
 
     @Override
@@ -55,10 +51,7 @@ class FingerTable {
         String builder = "";
 
         for( int i = 0; i < this.rows; i++ ){
-            builder = builder + Integer.toString( i ) + ":\t";
-            for( int j = 0; j < 2; j++ ){
-                builder = builder + Integer.toString( j ) + "\t";
-            }
+            builder = builder + Integer.toString( i ) + "\t" + this.fingerTableEntries[i].toString();
             builder = builder + "\n";
         }
 
