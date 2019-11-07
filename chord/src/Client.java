@@ -5,23 +5,27 @@ package src;
 
 import java.net.*;
 import java.io.*;
+import packet.*;
 
 public class Client extends Node {
 
-    public Client( Integer uuid ){
-        super( uuid );
+    private FingerTable fingerTable;
+
+    public Client( Integer id ){
+        super( id );
+        this.fingerTable = new FingerTable(id);
     }
 
     public static void main( String[] arg ) {
-        Client node = new Client( Integer.parseInt( arg[0] ) );
-        Thread nodeThread = new Thread( node );
+        Client client = new Client( Integer.parseInt( arg[0] ) );
+        Thread nodeThread = new Thread( client );
         nodeThread.start();
 
-        CLI cli = new CLI( node );
+        CLI cli = new CLI( client );
         Thread cliThread = new Thread( cli );
         cliThread.start();
 
-        node.testConnection();
+        client.connectToAnchor();
     }
 
     // Should only need a different behavior when asking to join the network
@@ -34,7 +38,7 @@ public class Client extends Node {
             BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
             out.println( this.globals.CONNECT +
                    this.globals.DELIMITER +
-                   Integer.toString( this.uuid ) );
+                   Integer.toString( this.id ) );
             System.out.println( (String) in.readLine() );
             out.close();
             in.close();
@@ -44,5 +48,22 @@ public class Client extends Node {
         }
     }
 
+
+    public void connectToAnchor() {
+        try{
+            Socket socket = new Socket( this.globals.ANCHOR_IP, this.globals.ANCHOR_PORT);
+            ObjectOutputStream out = new ObjectOutputStream(  socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
+            AnchorConnect anchorConnect = new AnchorConnect(this.id);
+            out.writeObject(anchorConnect);
+            AnchorResponse anchorResponse = (AnchorResponse) in.readObject();
+            this.fingerTable.processNodeTable(anchorResponse.nodeTable); 
+            out.close();
+            in.close();
+            socket.close();
+        }catch( Exception e ){
+            e.printStackTrace();
+        }
+    }
 
 }

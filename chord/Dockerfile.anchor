@@ -4,7 +4,8 @@ FROM openjdk:8-jdk-alpine
 WORKDIR /chord
 
 # Copy the current directory contents into the container at /src
-ADD src /chord/src
+ADD src/*.java /chord/src/
+ADD packet/*.java /chord/packet/
 
 #EXPOSE 30000  # anchor
 #EXPOSE 40000  # client

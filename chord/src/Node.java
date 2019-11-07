@@ -18,15 +18,15 @@ import java.io.*;
 abstract class Node implements Runnable{
     //protected FingerTable fingerTable;
     protected HashMap<Integer, String> ipTable;
-    protected Integer uuid;
+    protected Integer id;
     protected ServerSocket serverSocket;
     public Globals globals = new Globals();
     // some sort of structure to store the file?
 
-    public Node( Integer uuid ){
+    public Node( Integer id ){
         //this.fingerTable = new FingerTable();
         this.ipTable = new HashMap<>();
-        this.uuid = uuid;
+        this.id = id;
         try{
             this.serverSocket = new ServerSocket( this.globals.PORT );
         } catch( IOException e ){
@@ -35,7 +35,7 @@ abstract class Node implements Runnable{
         }
     } 
 
-    public void forwardMessage( String message, Integer uuid ){
+    public void forwardMessage( String message, Integer id ){
     
 
     }

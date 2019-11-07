@@ -22,21 +22,21 @@ clientPort = 40000
 def buildChord():
     buildDocker()
     createNetwork(networkName)
-    #runMaster(numWorkers, numThreads, masterPorts)
-    #time.sleep(3)
-    #runWorkers(masterPorts)
 
 
 def buildDocker():
     #check for tag name "cscsi251-Netti-worker"
     if not dockerImageExists(clientTag):
+        print("build client image")
         buildDockerImage(clientDockerFile, clientTag)
     if not dockerImageExists(anchorTag):
+        print("build anchor image")
         buildDockerImage(anchorDockerFile, anchorTag)
 
 
 def createNetwork(name):
     if not networkExists(name):
+        print("build network");
         os.system("docker network create --subnet=" + ipRange + " " + name)
 
 
