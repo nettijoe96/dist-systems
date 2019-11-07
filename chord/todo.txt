@@ -1,10 +1,7 @@
-1. anchor node sending all client ips to new client
-2. packet types
-3. finger table data structure
-4. message forwarding
-5. retreive data for specific key
-6. heartbeat with nodes in finger table 
+1. message forwarding
+2. retreive data for specific key
+3. heartbeat with nodes in finger table 
 update finger table with changes in the network
-7. implement cli
+4. implement cli
 
 
