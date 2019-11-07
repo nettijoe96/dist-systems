@@ -14,6 +14,7 @@ public class Anchor extends Node {
     public Anchor(){
         super( 0 );
         nodeTable = new HashMap<Integer, String>();
+        nodeTable.put( 0, this.globals.ANCHOR_IP );
     }
 
     public static void main( String[] arg ){
