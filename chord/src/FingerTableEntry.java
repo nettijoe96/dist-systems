@@ -3,9 +3,10 @@ package src;
 import java.util.HashMap;
 
 class FingerTableEntry{
-    public Integer nodeNumber;
-    public Integer successorNumber;
-    public String nodeIp;
+    // Possibly terrible names, don't know if we need successor number, more of a toubleshooting thing.
+    public Integer nodeNumber; // The node this should point to if everyone was online
+    public Integer successorNumber; // The actual node that this does point to
+    public String nodeIp; // The IP of the node that is online
 
     public FingerTableEntry( int thisNode, int i, HashMap<Integer, String> nodeTable ){
         // Hard coded ring size here... need to change in a bit

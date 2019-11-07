@@ -42,6 +42,7 @@ public class Client extends Node {
             AnchorResponse anchorResponse = (AnchorResponse) in.readObject();
             this.fingerTable.processNodeTable(anchorResponse.nodeTable); 
 
+            //More for troubleshooting, but just printing the fingertable that we generated
             System.out.println( "Finger table;" );
             System.out.println( this.fingerTable );
 

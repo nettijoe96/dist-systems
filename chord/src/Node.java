@@ -4,6 +4,7 @@ package src;
 import java.util.*;
 import java.net.*;
 import java.io.*;
+import packet.*;
 
 /*
  * Abstract class Node
@@ -16,16 +17,13 @@ import java.io.*;
  */
 
 abstract class Node implements Runnable{
-    //protected FingerTable fingerTable;
-    protected HashMap<Integer, String> ipTable;
+    protected FingerTable fingerTable = null;
     protected Integer id;
     protected ServerSocket serverSocket;
     public Globals globals = new Globals();
     // some sort of structure to store the file?
 
     public Node( Integer id ){
-        //this.fingerTable = new FingerTable();
-        this.ipTable = new HashMap<>();
         this.id = id;
         try{
             this.serverSocket = new ServerSocket( this.globals.PORT );
@@ -35,27 +33,74 @@ abstract class Node implements Runnable{
         }
     } 
 
-    public void forwardMessage( String message, Integer id ){
-    
+    public void forwardMessage( Message message ){
+        int dest = message.destinationId;
+        FingerTableEntry[] fingerTableEntries = this.fingerTable.fingerTableEntries;
+       // Check my fingertable
+        // Try to find the largest node in my table that is smaller than the destination
+        FingerTableEntry forwardTo = null;
+        for( FingerTableEntry ent : fingerTableEntries ){
+            if( ent.nodeNumber <= dest ){
+                if( forwardTo == null ){
+                    forwardTo = ent;
+                }else{
+                    if( forwardTo.nodeNumber < ent.nodeNumber ){
+                        forwardTo = ent;
+                    }
+                }
+            }
+        }
+        // If we never found anything lower than our destination node, we need the highest node
+        for( FingerTableEntry ent : fingerTableEntries ){
+            if( forwardTo == null){
+                forwardTo = ent;
+            }else if( forwardTo.nodeNumber < ent.nodeNumber ){
+                forwardTo = ent;
+            }
+        }
 
+        try{
+            // Now we definitely have a node that we are forwarding to,
+            // so time to forward it
+            Socket socket = new Socket( forwardTo.nodeIp, this.globals.PORT );
+            ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
+            ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
+
+            out.writeObject( message );
+
+            Packet response = (Packet) in.readObject();
+            System.out.println( response );
+
+            out.close();
+            in.close();
+            socket.close();
+        }catch( Exception e ){
+            e.printStackTrace();
+        }
     }
 
     abstract void printTable();
 
-    public void callManager( String call ){
+    public void callManager( Packet packet ){
         //Logic to decide where to pass it?
         //Need a structure for calls?
 
-        String[] split = call.split(this.globals.DELIMITER); 
-
-        String command = split[0];
-
-        if( command.equals( this.globals.CONNECT ) ){
-            System.out.println( "TODO: implement connect");
+        String type = packet.getPacketType();
+        if( type.equals( this.globals.Connect ) ){
+            System.out.println( "TODO: implement connect, maybe... I don't think we have to do this");
             // add to table and return an IP
+        }else if( type.equals( this.globals.Message ) ){
+            Message message = (Message) packet;
+
+            // Need to deal with when we are holding the keys for the destination node
+            if( message.destinationId == this.id ){
+                System.out.println( "Recieved message:" );
+                System.out.println( message.message );
+            }else{
+                forwardMessage( message );
+            }
         }else{
             System.out.println( "Unimplemented command" );
-            System.out.println( command );
         }
     }
 
@@ -64,18 +109,22 @@ abstract class Node implements Runnable{
             try{
                 Socket socket = this.serverSocket.accept();
 
-                BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
-                PrintWriter out = new PrintWriter( socket.getOutputStream(), true );
-                String message = in.readLine();
+                ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
+                ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
+                Packet packet = (Packet) in.readObject();
 
-                callManager( message );
-                out.println( "ACK" );
+                callManager( packet );
+
+                out.writeObject( new Packet( "ack", this.id ) );
 
                 in.close();
                 out.close();
                 socket.close();
             }catch( IOException e ){
                 System.out.println( "Error while client connecting." );
+                e.printStackTrace();
+            }catch( ClassNotFoundException e ){
+                System.out.println( "Received an unknown object over the network" );
                 e.printStackTrace();
             }
         }

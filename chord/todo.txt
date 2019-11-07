@@ -1,7 +1,7 @@
 1. message forwarding
-2. retreive data for specific key
+2.update finger table with changes in the network
+2.5 retreive data for specific key
 3. heartbeat with nodes in finger table, no need for this, just only allow nodes to exit cleanly, professor recommended this was because it's easier
-update finger table with changes in the network
-4. implement cli
+4. implement cli, do this some as we go because we need to do some testing
 
 
