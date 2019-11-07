@@ -8,8 +8,7 @@ import java.io.*;
 import packet.*;
 
 public class Client extends Node {
-
-    private FingerTable fingerTable;
+    protected FingerTable fingerTable;
 
     public Client( Integer id ){
         super( id );
