@@ -16,7 +16,7 @@ public class Globals {
 
     //connect
     public static final String Connect = "CONNECT";
-    public static final String Message = "MESSAGE";
+    public static final String Message = "message";
 
     // CLI commands
     public static final String PRINT_TABLE = "print-table";

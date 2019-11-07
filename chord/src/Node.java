@@ -18,7 +18,7 @@ import packet.*;
 
 abstract class Node implements Runnable{
     protected FingerTable fingerTable = null;
-    protected Integer id;
+    public Integer id;
     protected ServerSocket serverSocket;
     public Globals globals = new Globals();
     // some sort of structure to store the file?
@@ -86,6 +86,7 @@ abstract class Node implements Runnable{
         //Need a structure for calls?
 
         String type = packet.getPacketType();
+        System.out.println( "packet type:\t" + type );
         if( type.equals( this.globals.Connect ) ){
             System.out.println( "TODO: implement connect, maybe... I don't think we have to do this");
             // add to table and return an IP
