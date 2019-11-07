@@ -8,7 +8,8 @@ class FingerTableEntry{
     public String nodeIp;
 
     public FingerTableEntry( int thisNode, int i, HashMap<Integer, String> nodeTable ){
-        this.nodeNumber = thisNode + (int) Math.pow(2, i);
+        // Hard coded ring size here... need to change in a bit
+        this.nodeNumber = (thisNode + (int) Math.pow(2, i)) % 16; 
         for( Integer uuid : nodeTable.keySet() ){
             if( uuid >= this.nodeNumber ){
                 this.successorNumber = uuid;
