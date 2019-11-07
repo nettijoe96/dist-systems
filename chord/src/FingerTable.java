@@ -50,4 +50,19 @@ class FingerTable {
             fingerTable[i][1] = successor;
         }
     }  
+
+    @Override
+    public String toString(){
+        String builder = "";
+
+        for( int i = 0; i < this.rows; i++ ){
+            builder = builder + Integer.toString( i ) + ":\t";
+            for( int j = 0; j < 2; j++ ){
+                builder = builder + Integer.toString( j ) + "\t";
+            }
+            builder = builder + "\n";
+        }
+
+        return builder;
+    }
 }

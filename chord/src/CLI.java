@@ -11,17 +11,12 @@ public class CLI implements Runnable{
     }
 
     public void run(){
-/*
         Scanner in = new Scanner(System.in);
         while(true){
             String input = in.nextLine();
 
-            this.node.testConnection();
-
-
             System.out.println( "TODO implement CLI" );
         }
-*/
     }
 
 }

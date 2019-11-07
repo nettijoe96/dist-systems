@@ -31,33 +31,21 @@ public class Client extends Node {
     // Should only need a different behavior when asking to join the network
     // and when being asked to join (refuse it instead of dole out an address?)
 
-    public void testConnection(){
-        try{
-            Socket socket = new Socket( this.globals.ANCHOR_IP, this.globals.PORT);
-            PrintWriter out = new PrintWriter(  socket.getOutputStream(), true );
-            BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
-            out.println( this.globals.CONNECT +
-                   this.globals.DELIMITER +
-                   Integer.toString( this.id ) );
-            System.out.println( (String) in.readLine() );
-            out.close();
-            in.close();
-            socket.close();
-        }catch( Exception e ){
-            e.printStackTrace();
-        }
-    }
-
-
     public void connectToAnchor() {
         try{
             Socket socket = new Socket( this.globals.ANCHOR_IP, this.globals.ANCHOR_PORT);
             ObjectOutputStream out = new ObjectOutputStream(  socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
+
             AnchorConnect anchorConnect = new AnchorConnect(this.id);
             out.writeObject(anchorConnect);
+
             AnchorResponse anchorResponse = (AnchorResponse) in.readObject();
             this.fingerTable.processNodeTable(anchorResponse.nodeTable); 
+
+            System.out.println( "Finger table;" );
+            System.out.println( this.fingerTable );
+
             out.close();
             in.close();
             socket.close();
