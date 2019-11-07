@@ -33,7 +33,6 @@ class FingerTable {
 
     
     public void processNodeTable(HashMap<Integer, String> nodeTable) {
-
         
         Integer[] keys = nodeTable.keySet().toArray(new Integer[0]);
         Arrays.sort(keys);
