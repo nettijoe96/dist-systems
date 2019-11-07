@@ -6,7 +6,7 @@ public class Message extends Packet{
     public String message;
 
     public Message( int id, int destinationId, String message ){
-        super( "MESSAGE", id );
+        super( "message", id );
         this.destinationId = destinationId;
         this.message = message;
     }

@@ -51,11 +51,13 @@ abstract class Node implements Runnable{
             }
         }
         // If we never found anything lower than our destination node, we need the highest node
-        for( FingerTableEntry ent : fingerTableEntries ){
-            if( forwardTo == null){
-                forwardTo = ent;
-            }else if( forwardTo.nodeNumber < ent.nodeNumber ){
-                forwardTo = ent;
+        if( forwardTo == null ){
+            for( FingerTableEntry ent : fingerTableEntries ){
+                if( forwardTo == null){
+                    forwardTo = ent;
+                }else if( forwardTo.nodeNumber < ent.nodeNumber ){
+                    forwardTo = ent;
+                }
             }
         }
 

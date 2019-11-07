@@ -13,6 +13,7 @@ public class Client extends Node {
     public Client( Integer id ){
         super( id );
         this.fingerTable = new FingerTable(id);
+        super.fingerTable = this.fingerTable;
     }
 
     public static void main( String[] arg ) {
