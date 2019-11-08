@@ -1,6 +1,7 @@
 package src;
 
 import java.util.HashMap;
+import java.util.Arrays;
 
 class FingerTableEntry{
     // Possibly terrible names, don't know if we need successor number, more of a toubleshooting thing.
@@ -11,22 +12,20 @@ class FingerTableEntry{
     public FingerTableEntry( int thisNode, int i, HashMap<Integer, String> nodeTable ){
         // Hard coded ring size here... need to change in a bit
         this.nodeNumber = (thisNode + (int) Math.pow(2, i)) % 16; 
-        for( Integer uuid : nodeTable.keySet() ){
+        Integer[] keys = nodeTable.keySet().toArray(new Integer[0]);
+        Arrays.sort(keys);
+        for( Integer uuid : keys ){
             if( uuid >= this.nodeNumber ){
                 this.successorNumber = uuid;
                 this.nodeIp = nodeTable.get(uuid);
                 break;
             }
         }
-        // No successor gotten from that
+        // No successor gotten from that, then we take the smallest
         if( successorNumber == null ){
-            // So find the lowest node that must be it
-            // this is a terrible way to do this but it works...
-            for( Integer uuid : nodeTable.keySet() ){
-                this.successorNumber = uuid;
-                this.nodeIp = nodeTable.get( uuid );
-                break;
-            }
+            Integer uuid = keys[0]; 
+            this.successorNumber = uuid;
+            this.nodeIp = nodeTable.get( uuid );
         }
     }
 
