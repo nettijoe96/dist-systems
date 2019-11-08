@@ -10,8 +10,8 @@ class FingerTableEntry{
     public String nodeIp; // The IP of the node that is online
 
     public FingerTableEntry( int thisNode, int i, HashMap<Integer, String> nodeTable ){
-        // Hard coded ring size here... need to change in a bit
-        this.nodeNumber = (thisNode + (int) Math.pow(2, i)) % 16; 
+        Globals globals = new Globals();
+        this.nodeNumber = (thisNode + (int) Math.pow(2, i)) % globals.ringSize; 
         Integer[] keys = nodeTable.keySet().toArray(new Integer[0]);
         Arrays.sort(keys);
         for( Integer uuid : keys ){
@@ -33,6 +33,5 @@ class FingerTableEntry{
     @Override
     public String toString(){
         return this.nodeNumber.toString() + "\t" + this.successorNumber.toString() + "\t" + this.nodeIp;
-
     }
 }

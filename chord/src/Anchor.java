@@ -1,6 +1,7 @@
 package src;
 
 import java.util.*;
+import java.util.concurrent.Semaphore;
 import java.net.ServerSocket;
 import java.net.Socket;
 import packet.*;
@@ -10,16 +11,19 @@ public class Anchor extends Node {
 
     private HashMap<Integer, String> nodeTable;
     private static Globals globals = new Globals();
+    private Semaphore nodesMutex;
 
     public Anchor(){
         super( 0 );
+        nodesMutex = new Semaphore(1);
         nodeTable = new HashMap<Integer, String>();
         nodeTable.put( 0, this.globals.ANCHOR_IP );
+        fingerTable.processNodeTable(nodeTable);
     }
 
     public static void main( String[] arg ){
 
-
+        
         Anchor anchor = new Anchor();
         Thread nodeThread = new Thread( anchor );
         nodeThread.start();
@@ -48,7 +52,7 @@ public class Anchor extends Node {
 
     }
 
-    private class AnchorListener extends Thread {
+    public class AnchorListener extends Thread {
 
         Socket socket; 
 
@@ -60,11 +64,31 @@ public class Anchor extends Node {
             try {
                 ObjectOutputStream out = new ObjectOutputStream(this.socket.getOutputStream());
                 ObjectInputStream in = new ObjectInputStream(this.socket.getInputStream());
-                AnchorConnect conn = (AnchorConnect) in.readObject();
-                String ip = socket.getInetAddress().getHostName();
-                nodeTable.put(conn.getId(), ip);
-                AnchorResponse response = new AnchorResponse(nodeTable);
-                out.writeObject(response);
+                Packet packet = (Packet) in.readObject();
+                String type = packet.getPacketType();
+                if (type.equals(globals.AnchorConnect)) {
+                    String ip = socket.getInetAddress().getHostName();
+                    int newId = packet.getId();
+                    nodesMutex.acquire();
+                    nodeTable.put(newId, ip);
+                    fingerTable.processNodeTable(nodeTable);
+                    nodesMutex.release();
+                    NewClient newClient = new NewClient(newId, ip);
+                    for(Integer id : nodeTable.keySet()) {
+                        if(id != newId) {
+                            AnchorSender sender = new AnchorSender(nodeTable.get(id), (Packet) newClient);
+                            sender.start();
+                        }
+                    }
+                    AnchorResponse response = new AnchorResponse(nodeTable);
+                    out.writeObject(response);
+                }
+                else if (type.equals(globals.ClientClose)) {
+                    nodesMutex.acquire();
+                    nodeTable.remove(packet.getId()); 
+                    fingerTable.processNodeTable(nodeTable);
+                    nodesMutex.release();
+                }
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -72,7 +96,35 @@ public class Anchor extends Node {
             catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public class AnchorSender extends Thread {
+
+        String ip; 
+        Packet packet;
+
+        AnchorSender(String ip, Packet packet) {
+            this.ip = ip;
+            this.packet = packet;
+        }
+
+        public void run() {
+            Globals globals = new Globals();  
+            try {
+                Socket socket = new Socket(ip, globals.PORT);
+                ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
+                ObjectInputStream in = new ObjectInputStream( socket.getInputStream() ); 
+                out.writeObject(packet);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }       
+
     }
 
     public void printTable(){

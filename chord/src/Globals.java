@@ -13,10 +13,12 @@ public class Globals {
     //anchor
     public static final String AnchorConnect = "ANCHOR CONNECT";
     public static final String AnchorResponse = "ANCHOR RESPONSE";
+    public static final String ClientClose = "CLIENT CLOSE";
 
-    //connect
+    //node
     public static final String Connect = "CONNECT";
     public static final String Message = "message";
+    public static final String NewClient = "NEW CLIENT";
 
     // CLI commands
     public static final String PRINT_TABLE = "print-table";

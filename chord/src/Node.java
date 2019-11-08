@@ -17,7 +17,7 @@ import packet.*;
  */
 
 abstract class Node implements Runnable{
-    protected FingerTable fingerTable = null;
+    protected FingerTable fingerTable;
     public Integer id;
     protected ServerSocket serverSocket;
     public Globals globals = new Globals();
@@ -25,6 +25,7 @@ abstract class Node implements Runnable{
 
     public Node( Integer id ){
         this.id = id;
+        this.fingerTable = new FingerTable(id);
         try{
             this.serverSocket = new ServerSocket( this.globals.PORT );
         } catch( IOException e ){
@@ -102,6 +103,12 @@ abstract class Node implements Runnable{
             }else{
                 forwardMessage( message );
             }
+        }else if( type.equals( this.globals.NewClient ) ){
+            NewClient newClient = (NewClient) packet;
+            int newId = newClient.getId();
+            String ip = newClient.ip;
+            fingerTable.newClient(newId, ip);
+            System.out.println(fingerTable.toString());
         }else{
             System.out.println( "Unimplemented command" );
         }
@@ -115,11 +122,8 @@ abstract class Node implements Runnable{
                 ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
                 ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
                 Packet packet = (Packet) in.readObject();
-
                 callManager( packet );
-
                 out.writeObject( new Packet( "ack", this.id ) );
-
                 in.close();
                 out.close();
                 socket.close();

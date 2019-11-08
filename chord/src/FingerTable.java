@@ -23,29 +23,35 @@ class FingerTable {
     }
 
     public void processNodeTable(HashMap<Integer, String> nodeTable) {
-        
         for( int i = 0; i < this.rows; i++){
             fingerTableEntries[i] = new FingerTableEntry( this.myUUID, i, nodeTable );
         }
-
-        /*
-        Integer[] keys = nodeTable.keySet().toArray(new Integer[0]);
-        Arrays.sort(keys);
- 
-        for(int i = 0; i < this.rows; i++) {
-            int ideal = fingerTable[i][0];
-            int successor = keys[0];
-            for(int j = 0; j < keys.length; j++) {
-                if(keys[j] > ideal) {
-                    break;
-                } 
-                successor = keys[j];
-            }
-            fingerTable[i][1] = successor;
-        }
-        */
     }  
 
+    public void newClient(int id, String ip) {
+        for(FingerTableEntry e : fingerTableEntries) {
+            if(inBetween(e.nodeNumber, e.successorNumber, id) || e.nodeNumber == id) {
+                e.successorNumber = id; 
+                e.nodeIp = ip; 
+            }
+        }
+    }
+
+    private boolean inBetween(int startId, int endId, int thirdId) {
+        if(thirdId > startId) {
+            return endId > thirdId || endId < startId;
+        }
+        else if (thirdId < startId) {
+            return endId < startId && endId > thirdId;
+        }
+        else {
+            return false;
+        }
+        //return ((startId + thridId) % globals.ringSpace) < ((startId + endId) % globals.ringSpace)
+
+    }
+
+  
     @Override
     public String toString(){
         String builder = "";

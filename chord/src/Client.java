@@ -8,12 +8,10 @@ import java.io.*;
 import packet.*;
 
 public class Client extends Node {
-    protected FingerTable fingerTable;
 
     public Client( Integer id ){
         super( id );
-        this.fingerTable = new FingerTable(id);
-        super.fingerTable = this.fingerTable;
+        connectToAnchor();
     }
 
     public static void main( String[] arg ) {
@@ -25,7 +23,6 @@ public class Client extends Node {
         Thread cliThread = new Thread( cli );
         cliThread.start();
 
-        client.connectToAnchor();
     }
 
     // Should only need a different behavior when asking to join the network
