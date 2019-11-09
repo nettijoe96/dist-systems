@@ -240,6 +240,14 @@ abstract class Node implements Runnable{
             }
             dataArr.removeAll(toRemove);
 
+            // Remove the files from disk
+            for( Data d : toRemove ){
+
+                File file = new File( d.key );
+                file.delete();
+            }
+
+
         }
     }
 
