@@ -22,10 +22,14 @@ public class CLI implements Runnable{
 
             String command = tokens[0].toLowerCase();
 
-            if( command.equals( this.globals.NODE_TABLE ) ){
+            if( command.equals( this.globals.PRINT_NODE_TABLE ) ){
                 this.node.printTable();
-            }else if( command.equals( this.globals.FINGER_TABLE ) ){
+            }else if( command.equals( this.globals.PRINT_FINGER_TABLE ) ){
                 System.out.println(this.node.fingerTable); 
+            }else if( command.equals( this.globals.PRINT_DATA ) ){
+                for(Data d : node.dataArr) {
+                    System.out.println(d); 
+                }
             }else if(command.equals(this.globals.NEW_KEY_VALUE)) {
                 String[] subtokens = tokens[1].split(" ", 2);
                 if(subtokens.length != 2) {
@@ -39,7 +43,6 @@ public class CLI implements Runnable{
             }else if( command.equals( this.globals.REQUEST_DATA ) ){
                 String key = tokens[1];
                 node.requestData( key );
-
             }else if( command.equals( this.globals.CLOSE ) ){
                 node.close();
             }else if( command.equals( this.globals.HASH_IDS ) ){

@@ -24,7 +24,7 @@ abstract class Node implements Runnable{
     public Integer myId;
     protected ServerSocket serverSocket;
     public Globals globals = new Globals();
-    private ArrayList<Data> dataArr;
+    public ArrayList<Data> dataArr;
     public ArrayList<Integer> myHashIds; //the ids that are offline before this node
     public Boolean running;
 
