@@ -176,9 +176,9 @@ abstract class Node implements Runnable{
     public void redistributeData(int newId) {
         ArrayList<Integer> oldIds = new ArrayList<Integer>();
         if(myHashIds.contains(newId)) {
+            Collections.sort(myHashIds);
             int newi = myHashIds.indexOf(newId);
             //change the myHashIds
-            Collections.sort(myHashIds);
             int selfi = myHashIds.indexOf(myId); 
             
 
@@ -189,16 +189,16 @@ abstract class Node implements Runnable{
                 }
             }
             else if(myId > newId) {
-                for(int i = selfi; i >= 0; i--) {
+                for(int i = myHashIds.size()-1; i > selfi; i--) {
                     oldIds.add(myHashIds.get(i));
                     myHashIds.remove(i);
                 }
-                for(int i = globals.ringSize; i < newi; i--) {
+                for(int i = newi; i >= 0; i--) {
                     oldIds.add(myHashIds.get(i));
                     myHashIds.remove(i);
                 }
             }          
-
+            System.out.println("myHashIds: " + myHashIds);
             //search through all data and send the ids that we no longer care about
             for(Data d : dataArr) {
                 if(oldIds.contains(d.dataHash)) {
