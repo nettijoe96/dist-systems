@@ -65,16 +65,16 @@ abstract class Node implements Runnable{
         System.out.println("prev: " + prev);
         System.out.println("self: " + self);
 
-        if(prev > self) {
+        if(prev > myId) {
             for(int i = prev+1; i < globals.ringSize; i++) {
                 myHashIds.add(i);
             }
-            for(int i = 0; i < self; i++) {
+            for(int i = 0; i < myId; i++) {
                 myHashIds.add(i);
             }
         }
         else {
-            for(int i = prev+1; i < self; i++) {
+            for(int i = prev+1; i < myId; i++) {
                 myHashIds.add(i);
             }
         }
