@@ -21,6 +21,7 @@ public class Globals {
     public static final String NewClient = "NEW CLIENT";
     public static final String NewData = "NEW DATA";
     public static final String RequestData = "REQUEST DATA";
+    public static final String ReplyData = "REPLY DATA";
 
     // CLI commands
     public static final String PRINT_TABLE = "print-table";
