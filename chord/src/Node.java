@@ -166,7 +166,6 @@ abstract class Node implements Runnable{
             Data data = newData.data;
             newData(data); 
             System.out.println(myId);
-            System.out.println(" received data " + data);
         }else if( type.equals( this.globals.RequestData ) ){
             System.out.println("Request for data received");
             RequestData request = (RequestData) packet;
@@ -266,8 +265,8 @@ abstract class Node implements Runnable{
 
     }
 
-    public void addData(String key, String dataString) {
-        Data data = new Data(key, dataString);
+    public void addData(String fName, String dataString) {
+        Data data = new Data(fName, dataString);
         int hash = data.dataHash; 
 
         if(myHashIds.contains(hash)) {
