@@ -1,5 +1,7 @@
 package utility;
 
+import java.util.ArrayList;
+
 public class HashIdRelay extends Packet {
 
     public ArrayList<Integer> hashIds;

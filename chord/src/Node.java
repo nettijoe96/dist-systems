@@ -193,6 +193,9 @@ abstract class Node implements Runnable{
             String successorIp = close.successorIp;
             fingerTable.closeClient(oldId, successor, successorIp);
             System.out.println(fingerTable);
+        }else if( type.equals( this.globals.HashIdRelay ) ){
+            HashIdRelay idRelay = (HashIdRelay) packet;
+            myHashIds.addAll( idRelay.hashIds );
         }else{
             System.out.println( "Unimplemented command" );
         }
@@ -295,6 +298,11 @@ abstract class Node implements Runnable{
                 fingerTable.closeClient(myId, successor, successorIp);
                 System.out.println("after receiving ack");
                 System.out.println(fingerTable);
+                // Forward hashIds to successor
+                HashIdRelay hashIdRelay = new HashIdRelay( myId, myHashIds );
+                int dest = fingerTable.fingerTableEntries[0].successorNumber;
+                PacketWrapper idWrapper = new PacketWrapper( (Packet) hashIdRelay, dest );
+                forward( idWrapper );
                 //redistribute data (go through every data element and treat it as new data)
                 for(Data d : dataArr) {
                     NewData newData = new NewData(myId, d);

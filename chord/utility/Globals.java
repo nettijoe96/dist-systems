@@ -25,6 +25,7 @@ public class Globals {
     public static final String NewData = "NEW DATA";
     public static final String RequestData = "REQUEST DATA";
     public static final String ReplyData = "REPLY DATA";
+    public static final String HashIdRelay = "HASH ID RELAY";
 
     // CLI commands
     public static final String PRINT_TABLE = "print-table";
