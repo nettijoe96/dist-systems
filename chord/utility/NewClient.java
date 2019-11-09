@@ -5,7 +5,7 @@ public class NewClient extends Packet {
     public String ip;
 
     public NewClient(int id, String ip) {
-        super("NEW CLIENT", id);
+        super(Globals.NewClient, id);
         this.ip = ip;
     }
 

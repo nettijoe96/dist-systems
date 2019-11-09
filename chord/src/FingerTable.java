@@ -27,17 +27,7 @@ class FingerTable {
         for( int i = 0; i < this.rows; i++){
             fingerTableEntries[i] = new FingerTableEntry( this.myUUID, i, nodeTable );
         }
-/*
-        finalSuccessor = fingerTableEntries[this.rows-1].successorNumber;
-        int n = finalSuccessor;
-        while (n < myUUID) {
-            n++;
-            if(n == ringSize) {
-                n = 0;
-            }
-        }
-*/
-    }  
+    }
 
     public void newClient(int id, String ip) {
         for(FingerTableEntry e : fingerTableEntries) {
@@ -46,6 +36,15 @@ class FingerTable {
                 e.nodeIp = ip; 
             }
         }
+    }
+
+
+    public void closeClient(int oldId, int successor) {
+        for(FingerTableEntry e: fingerTableEntries) {
+            if (e.successorNumber == oldId) {
+                e.successorNumber = successor;
+            }
+        } 
     }
 
     private boolean inBetween(int startId, int endId, int thirdId) {

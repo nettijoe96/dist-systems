@@ -10,12 +10,14 @@ public class Globals {
 
 
     //packets
+    public static final String ACK = "ACK";
     //anchor
     public static final String AnchorConnect = "ANCHOR CONNECT";
     public static final String AnchorResponse = "ANCHOR RESPONSE";
-    public static final String ClientClose = "CLIENT CLOSE";
+    public static final String CloseRelay = "CLOSE RELAY";
 
     //node
+    public static final String InitiateClose = "INITIATE CLOSE";
     public static final String Connect = "CONNECT";
     public static final String Message = "message";
     public static final String NewClient = "NEW CLIENT";
@@ -27,4 +29,5 @@ public class Globals {
     public static final String PRINT_TABLE = "print-table";
     public static final String NEW_KEY_VALUE = "add";
     public static final String REQUEST_DATA = "request";
+    public static final String CLOSE = "close";
 }
