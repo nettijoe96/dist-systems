@@ -1,4 +1,4 @@
-package src;
+package utility;
 
 public class Globals {
 
@@ -19,7 +19,9 @@ public class Globals {
     public static final String Connect = "CONNECT";
     public static final String Message = "message";
     public static final String NewClient = "NEW CLIENT";
+    public static final String NewData = "NEW DATA";
 
     // CLI commands
     public static final String PRINT_TABLE = "print-table";
+    public static final String NEW_KEY_VALUE = "add";
 }

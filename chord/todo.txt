@@ -1,6 +1,7 @@
 1. add data to table. cli function and appropiate message forwarding.
-2. retreive data for specific key
-3. close down node function, redistribute keys, tell anchor (anchor tells everyone else)
-4. implement cli, do this some as we go because we need to do some testing
+2. when new client is added, assess our hashIds, and see if we need to redistribute data
+3. retreive data for specific key
+4. close down node function, redistribute keys, tell anchor (anchor tells everyone else)
+5. implement cli, do this some as we go because we need to do some testing
 
 

@@ -1,4 +1,4 @@
-package packet;
+package utility;
 
 
 public class Message extends Packet{

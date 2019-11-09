@@ -2,6 +2,7 @@ package src;
 
 import java.util.HashMap;
 import java.util.Arrays;
+import utility.Globals;
 
 class FingerTableEntry{
     // Possibly terrible names, don't know if we need successor number, more of a toubleshooting thing.

@@ -4,6 +4,7 @@ package src;
 import java.util.Arrays;
 import java.net.Socket;
 import java.util.HashMap;
+import utility.Globals;
 
 class FingerTable {
 
@@ -26,6 +27,16 @@ class FingerTable {
         for( int i = 0; i < this.rows; i++){
             fingerTableEntries[i] = new FingerTableEntry( this.myUUID, i, nodeTable );
         }
+/*
+        finalSuccessor = fingerTableEntries[this.rows-1].successorNumber;
+        int n = finalSuccessor;
+        while (n < myUUID) {
+            n++;
+            if(n == ringSize) {
+                n = 0;
+            }
+        }
+*/
     }  
 
     public void newClient(int id, String ip) {
@@ -51,6 +62,15 @@ class FingerTable {
 
     }
 
+
+    public String getDestinationIp(int idealId) {
+        for(FingerTableEntry e : fingerTableEntries) {
+            if(e.successorNumber >= idealId) {
+                return e.nodeIp; 
+            }
+        } 
+        return fingerTableEntries[0].nodeIp; 
+    }
   
     @Override
     public String toString(){

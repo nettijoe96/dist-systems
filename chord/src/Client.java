@@ -5,7 +5,7 @@ package src;
 
 import java.net.*;
 import java.io.*;
-import packet.*;
+import utility.*;
 
 public class Client extends Node {
 
@@ -34,7 +34,7 @@ public class Client extends Node {
             ObjectOutputStream out = new ObjectOutputStream(  socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
 
-            AnchorConnect anchorConnect = new AnchorConnect(this.id);
+            AnchorConnect anchorConnect = new AnchorConnect(this.myId);
             out.writeObject(anchorConnect);
 
             AnchorResponse anchorResponse = (AnchorResponse) in.readObject();

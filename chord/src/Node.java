@@ -1,10 +1,10 @@
 package src;
 
 
-import java.util.*;
 import java.net.*;
 import java.io.*;
-import packet.*;
+import utility.*;
+import java.util.ArrayList;
 
 /*
  * Abstract class Node
@@ -18,14 +18,16 @@ import packet.*;
 
 abstract class Node implements Runnable{
     protected FingerTable fingerTable;
-    public Integer id;
+    public Integer myId;
     protected ServerSocket serverSocket;
     public Globals globals = new Globals();
-    // some sort of structure to store the file?
+    private ArrayList<Data> dataArr;
+    private ArrayList<Integer> myHashIds;
 
     public Node( Integer id ){
-        this.id = id;
+        this.myId = id;
         this.fingerTable = new FingerTable(id);
+        this.dataArr = new ArrayList<Data>();
         try{
             this.serverSocket = new ServerSocket( this.globals.PORT );
         } catch( IOException e ){
@@ -34,24 +36,30 @@ abstract class Node implements Runnable{
         }
     } 
 
-    public void forwardMessage( Message message ){
-        int dest = message.destinationId;
+    public void forward( PacketWrapper wrapper ){
+        int dest = wrapper.destination;
         FingerTableEntry[] fingerTableEntries = this.fingerTable.fingerTableEntries;
-       // Check my fingertable
+        // Check my fingertable
         // Try to find the largest node in my table that is smaller than the destination
         FingerTableEntry forwardTo = null;
         for( FingerTableEntry ent : fingerTableEntries ){
-            if( ent.nodeNumber <= dest ){
+            if( ent.nodeNumber == dest) {
+                wrapper.destination = ent.successorNumber;   //we need to send the data to the right place given that everyone does not know the whole network and the network may not be full
+                forwardTo = ent;
+                break;
+            }
+            else if( ent.nodeNumber < dest ){
                 if( forwardTo == null ){
                     forwardTo = ent;
                 }else{
-                    if( forwardTo.nodeNumber < ent.nodeNumber ){
+                    if( ent.nodeNumber > forwardTo.nodeNumber ){ //getting as close as we can to destination
                         forwardTo = ent;
                     }
                 }
             }
         }
-        // If we never found anything lower than our destination node, we need the highest node
+
+        // If we never found anything less or equal to our destination node, we need the highest node
         if( forwardTo == null ){
             for( FingerTableEntry ent : fingerTableEntries ){
                 if( forwardTo == null){
@@ -69,7 +77,7 @@ abstract class Node implements Runnable{
             ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
             ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
 
-            out.writeObject( message );
+            out.writeObject( wrapper );
 
             Packet response = (Packet) in.readObject();
             System.out.println( response );
@@ -92,38 +100,62 @@ abstract class Node implements Runnable{
         System.out.println( "packet type:\t" + type );
         if( type.equals( this.globals.Connect ) ){
             System.out.println( "TODO: implement connect, maybe... I don't think we have to do this");
-            // add to table and return an IP
-        }else if( type.equals( this.globals.Message ) ){
-            Message message = (Message) packet;
-
-            // Need to deal with when we are holding the keys for the destination node
-            if( message.destinationId == this.id ){
-                System.out.println( "Recieved message:" );
-                System.out.println( message.message );
-            }else{
-                forwardMessage( message );
-            }
         }else if( type.equals( this.globals.NewClient ) ){
             NewClient newClient = (NewClient) packet;
             int newId = newClient.getId();
             String ip = newClient.ip;
             fingerTable.newClient(newId, ip);
             System.out.println(fingerTable.toString());
+        }else if( type.equals( this.globals.NewData ) ){
+            NewData newData = (NewData) packet;         
+            Data data = newData.data;
+            newData(data); 
         }else{
             System.out.println( "Unimplemented command" );
         }
     }
 
+    public void newData(Data data) {
+        dataArr.add(data);    
+        if(!myHashIds.contains(data.dataHash)) {
+            myHashIds.add(data.dataHash);
+        }
+    }
+
+    public void addData(String key, String dataString) {
+        Data data = new Data(key, dataString);
+        int hash = data.dataHash; 
+
+        if(myHashIds.contains(hash)) {
+            newData(data);  
+        }
+        else {
+            NewData newData = new NewData(myId, data);
+            //int destination = fingerTable.getDestinationIp(hash);
+            PacketWrapper wrapper = new PacketWrapper((Packet) newData, hash);
+            forward(wrapper);
+        }
+    }
+
+    public void processWrapper(PacketWrapper wrapper) {
+        if(wrapper.atDestination(myId)) {
+            Packet packet = (Packet) wrapper.packet; 
+            callManager( packet );
+        }
+        else {
+            forward(wrapper);    
+        }
+    }
+    
     public void run(){
         while( true ){
             try{
                 Socket socket = this.serverSocket.accept();
-
                 ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
                 ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
-                Packet packet = (Packet) in.readObject();
-                callManager( packet );
-                out.writeObject( new Packet( "ack", this.id ) );
+                PacketWrapper wrapper = (PacketWrapper) in.readObject();
+                processWrapper(wrapper);
+                out.writeObject( new Packet( "ack", this.myId ) );
                 in.close();
                 out.close();
                 socket.close();
