@@ -157,7 +157,7 @@ abstract class Node implements Runnable{
             Data data = newData.data;
             newData(data); 
             System.out.println(myId);
-            System.out.println(" received data" + data.dataString);
+            System.out.println(" received data " + data);
         }else{
             System.out.println( "Unimplemented command" );
         }
