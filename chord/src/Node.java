@@ -18,7 +18,6 @@ import java.util.Arrays;
  * giving out arbitrary IP addresses to new nodes that join the network
  * while a ClientNode is restricted to addresses in it's fingertable
  */
-
 abstract class Node implements Runnable{
     protected FingerTable fingerTable;
     public Integer myId;
@@ -48,6 +47,12 @@ abstract class Node implements Runnable{
         System.out.println("Hash Ids:\t" + this.myHashIds );
     }
 
+
+
+    /*
+    given a nodeTable, create the list of hashIds that you will receive data for.
+    @param: nodeTable
+    */
     public void initMyHashIds(HashMap<Integer, String> nodeTable) {
         
         System.out.println(nodeTable);
@@ -88,6 +93,10 @@ abstract class Node implements Runnable{
 
     }
 
+    /*
+    forwarding messages to the destination
+    @param: wrapper of packet
+    */
     public void forward( PacketWrapper wrapper ){
         int dest = wrapper.destination;
         FingerTableEntry[] fingerTableEntries = this.fingerTable.fingerTableEntries;
@@ -95,8 +104,8 @@ abstract class Node implements Runnable{
         // Try to find the largest node in my table that is smaller than the destination
         FingerTableEntry forwardTo = null;
         for( FingerTableEntry ent : fingerTableEntries ){
-            if( ent.nodeNumber == dest) {
-                wrapper.destination = ent.successorNumber;   //we need to send the data to the right place given that everyone does not know the whole network and the network may not be full
+            if( ent.nodeNumber == dest) {   //we need to send the data to the right place given that everyone does not know the whole network and the network may not be full
+                wrapper.destination = ent.successorNumber;   
                 forwardTo = ent;
                 break;
             }
@@ -146,10 +155,13 @@ abstract class Node implements Runnable{
 
     abstract void printTable();
 
-    public void callManager( Packet packet ){
-        //Logic to decide where to pass it?
-        //Need a structure for calls?
 
+    /*
+    when another node or anchor connects to this node, callManager processes the packet.
+    The possible packets are: RequestData, NewClient, NewData
+    @param: packet
+    */
+    public void callManager( Packet packet ){
         String type = packet.getPacketType();
         System.out.println( "packet type:\t" + type );
         if( type.equals( this.globals.Connect ) ){
@@ -158,7 +170,7 @@ abstract class Node implements Runnable{
             NewClient newClient = (NewClient) packet;
             int newId = newClient.getId();
             String ip = newClient.ip;
-            fingerTable.newClient(newId, ip);
+            fingerTable.newClient(newId, ip);  //adjust fingertable with new client
             redistributeData(newId);
             System.out.println(fingerTable.toString());
         }else if( type.equals( this.globals.NewData ) ){
@@ -178,7 +190,6 @@ abstract class Node implements Runnable{
                     replyData = d;
                 }
             }
-
             ReplyData reply = new ReplyData( replyData );
             PacketWrapper replyPacket = new PacketWrapper( reply, requester );
             forward( replyPacket );
@@ -202,7 +213,14 @@ abstract class Node implements Runnable{
     }
 
 
-
+    /*
+    when there is a new client we may have to redistribute the data.
+    in the case of a redistribution:
+        myHashIds is updated.
+        data is then sent around the network in newData packets.
+        dataArr is updated
+    @param: newId
+    */
     public void redistributeData(int newId) {
         ArrayList<Integer> oldIds = new ArrayList<Integer>();
         if(myHashIds.contains(newId)) {
@@ -244,10 +262,12 @@ abstract class Node implements Runnable{
         }
     }
 
-    public void newData(Data data) {
-        dataArr.add(data);    
-    }
 
+  
+    /*
+    request data from the network
+    @param: key
+    */
     public void requestData( String key ){
         int hash = key.hashCode() % globals.ringSize;
 
@@ -266,6 +286,16 @@ abstract class Node implements Runnable{
 
     }
 
+    public void newData(Data data) {
+        dataArr.add(data);    
+    }
+
+
+    /*
+    add data to the current node or forward the message
+    @param: key
+    @param: dataString
+    */
     public void addData(String key, String dataString) {
         Data data = new Data(key, dataString);
         int hash = data.dataHash; 
@@ -282,7 +312,15 @@ abstract class Node implements Runnable{
         }
     }
 
- 
+    /*
+    close the current client:
+        send a message to anchor
+        anchor sends a message to all clients in the network. 
+        wait for a response from anchor, now you know that all clients have adjusted their fingertables
+        adjust your own finger table 
+        forward all data around the network
+        close
+    */
     public void close() {
         try {
             //send client close to anchor
@@ -313,9 +351,6 @@ abstract class Node implements Runnable{
                     forward(wrapper);
                 } 
             }
-            else {
-                //TODO: error
-            }
             System.out.println("before running = false");
             this.running = false;
             System.exit(0);
@@ -327,6 +362,10 @@ abstract class Node implements Runnable{
     }
 
 
+    /*
+    process a wrapped packet. Either forward or process packet if we are destination
+    @param: wrapper
+    */
     public void processWrapper(PacketWrapper wrapper) {
         if(myHashIds.contains(wrapper.destination)) {
             Packet packet = (Packet) wrapper.packet; 
@@ -337,6 +376,10 @@ abstract class Node implements Runnable{
         }
     }
     
+    /*
+    while node is running, accept new connection and process them 
+    send back acknowledgements when done
+    */
     public void run(){
         while( running ){
             try{

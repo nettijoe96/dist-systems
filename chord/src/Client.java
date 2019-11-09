@@ -1,12 +1,13 @@
 package src;
-/* Just for the client node
- * Don't put anything in here that the anchor node will also have to do
- */
 
 import java.net.*;
 import java.io.*;
 import utility.*;
 
+/*
+* Client extends Node. 
+* We connect to anchor to bootstrap node
+*/
 public class Client extends Node {
 
     public Client( Integer id ){
@@ -25,9 +26,9 @@ public class Client extends Node {
 
     }
 
-    // Should only need a different behavior when asking to join the network
-    // and when being asked to join (refuse it instead of dole out an address?)
-
+    /*
+    * connects to anchor when first starting to get information to build fingerTable
+    */
     public void connectToAnchor() {
         try{
             Socket socket = new Socket( this.globals.ANCHOR_IP, this.globals.ANCHOR_PORT);
@@ -40,9 +41,6 @@ public class Client extends Node {
             AnchorResponse anchorResponse = (AnchorResponse) in.readObject();
             this.fingerTable.processNodeTable(anchorResponse.nodeTable); 
             initMyHashIds(anchorResponse.nodeTable);
-            System.out.println("my hashids " + myHashIds);
-            //More for troubleshooting, but just printing the fingertable that we generated
-            System.out.println( "Finger table;" );
             System.out.println( this.fingerTable );
 
             out.close();

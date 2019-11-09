@@ -4,6 +4,10 @@ package src;
 import utility.*;
 import java.util.Scanner;
 
+
+/*
+* CLI class. See globals for available commands.
+*/
 public class CLI implements Runnable{
     private Node node;
     public Globals globals;

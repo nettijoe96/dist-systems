@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Arrays;
 import utility.Globals;
 
+/*
+* a row in the finger table. 
+* has nodeNumber (j+2^i), successor, and ip
+*/
 class FingerTableEntry{
-    // Possibly terrible names, don't know if we need successor number, more of a toubleshooting thing.
     public Integer nodeNumber; // The node this should point to if everyone was online
     public Integer successorNumber; // The actual node that this does point to
     public String nodeIp; // The IP of the node that is online
