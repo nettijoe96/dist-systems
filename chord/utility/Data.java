@@ -16,7 +16,7 @@ public class Data implements Serializable{
 
     private int hash(String key) {
         Globals globals = new Globals();
-        return key.hashCode() % globals.ringSize;
+        return Math.abs(key.hashCode()) % globals.ringSize;
     }
 
     @Override
