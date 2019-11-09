@@ -90,6 +90,7 @@ public class Anchor extends Node {
                     nodesMutex.acquire();
 
                     int oldId = packet.getId();
+                    System.out.println("oldId" + oldId);
                     int successor;
                     int oldi = 0;
                     Integer[] ids = nodeTable.keySet().toArray(new Integer[0]);

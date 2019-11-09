@@ -186,6 +186,7 @@ abstract class Node implements Runnable{
             int oldId = close.oldId;
             int successor = close.successor;
             fingerTable.closeClient(oldId, successor);
+            System.out.println(fingerTable);
         }else{
             System.out.println( "Unimplemented command" );
         }
@@ -272,6 +273,7 @@ abstract class Node implements Runnable{
     public void close() {
         try {
             //send client close to anchor
+            System.out.println("myId" + myId);
             InitiateClose initiateClose = new InitiateClose(myId);
             Socket socket = new Socket( this.globals.ANCHOR_IP, this.globals.ANCHOR_PORT);
             ObjectOutputStream out = new ObjectOutputStream(  socket.getOutputStream());
