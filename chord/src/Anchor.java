@@ -101,15 +101,16 @@ public class Anchor extends Node {
                             break;
                         }
                     } 
-                    if(oldi == 0) {
-                        successor = ids[ids.length-1];
+                    if(oldi == ids.length-1) {
+                        successor = ids[0];
                     }
                     else {
-                        successor = oldi-1;
+                        successor = ids[oldi+1];
                     }
-                    fingerTable.closeClient(oldId, successor);
+                    String successorIp = nodeTable.get(successor);
+                    fingerTable.closeClient(oldId, successor, successorIp);
                     nodeTable.remove(oldId); 
-                    CloseRelay closeRelay = new CloseRelay(oldId, successor);
+                    CloseRelay closeRelay = new CloseRelay(oldId, successor, successorIp);
                     ArrayList<AnchorSender> senders = new ArrayList<AnchorSender>();
                     for(Integer nodeId : nodeTable.keySet()) {
                         AnchorSender sender = new AnchorSender(nodeId, nodeTable.get(nodeId), (Packet) closeRelay, true);
@@ -119,7 +120,7 @@ public class Anchor extends Node {
                     for(AnchorSender sender : senders) {
                         sender.join();
                     }
-                    out.writeObject( new Packet(Globals.ACK, 0 ) );
+                    out.writeObject( new CloseResponse(successor, successorIp) );
                     System.out.println("after anchor ack");
 
                     nodesMutex.release();

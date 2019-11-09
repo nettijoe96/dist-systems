@@ -15,6 +15,7 @@ public class Globals {
     public static final String AnchorConnect = "ANCHOR CONNECT";
     public static final String AnchorResponse = "ANCHOR RESPONSE";
     public static final String CloseRelay = "CLOSE RELAY";
+    public static final String CloseResponse = "CLOSE RESPONSE";
 
     //node
     public static final String InitiateClose = "INITIATE CLOSE";

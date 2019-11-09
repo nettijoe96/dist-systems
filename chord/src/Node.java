@@ -185,7 +185,8 @@ abstract class Node implements Runnable{
             CloseRelay close = (CloseRelay) packet;
             int oldId = close.oldId;
             int successor = close.successor;
-            fingerTable.closeClient(oldId, successor);
+            String successorIp = close.successorIp;
+            fingerTable.closeClient(oldId, successor, successorIp);
             System.out.println(fingerTable);
         }else{
             System.out.println( "Unimplemented command" );
@@ -281,8 +282,13 @@ abstract class Node implements Runnable{
             out.writeObject(initiateClose);
             //wait until anchor responds with an ack, which means that everyone updated their fingertable
             Packet packet = (Packet) in.readObject();
-            if(packet.getPacketType().equals(Globals.ACK)) {
+            if(packet.getPacketType().equals(Globals.CloseResponse)) {
+                CloseResponse closeResponse = (CloseResponse) packet;
+                int successor = closeResponse.successor;
+                String successorIp = closeResponse.successorIp;
+                fingerTable.closeClient(myId, successor, successorIp);
                 System.out.println("after receiving ack");
+                System.out.println(fingerTable);
                 //redistribute data (go through every data element and treat it as new data)
                 for(Data d : dataArr) {
                     NewData newData = new NewData(myId, d);
