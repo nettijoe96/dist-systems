@@ -74,7 +74,7 @@ public class Anchor extends Node {
                     int newId = packet.getId();
                     nodesMutex.acquire();
                     nodeTable.put(newId, ip);
-                    fingerTable.processNodeTable(nodeTable);
+                    fingerTable.newClient(newId, ip);
                     nodesMutex.release();
                     NewClient newClient = new NewClient(newId, ip);
                     for(Integer nodeId : nodeTable.keySet()) {

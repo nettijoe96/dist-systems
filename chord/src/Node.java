@@ -6,6 +6,7 @@ import java.io.*;
 import utility.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collections;
 import java.util.Arrays;
 
 /*
@@ -151,6 +152,7 @@ abstract class Node implements Runnable{
             int newId = newClient.getId();
             String ip = newClient.ip;
             fingerTable.newClient(newId, ip);
+            redistributeData(newId);
             System.out.println(fingerTable.toString());
         }else if( type.equals( this.globals.NewData ) ){
             NewData newData = (NewData) packet;         
@@ -160,6 +162,45 @@ abstract class Node implements Runnable{
             System.out.println(" received data " + data);
         }else{
             System.out.println( "Unimplemented command" );
+        }
+    }
+
+
+    public void redistributeData(int newId) {
+        ArrayList<Integer> oldIds = new ArrayList<Integer>();
+        if(myHashIds.contains(newId)) {
+            int newi = myHashIds.indexOf(newId);
+            //change the myHashIds
+            Collections.sort(myHashIds);
+            int selfi = myHashIds.indexOf(myId); 
+            
+
+            if(myId < newId) {
+                for(int i = selfi+1; i <= newi; i++) {
+                    oldIds.add(myHashIds.get(i));
+                    myHashIds.remove(i);
+                }
+            }
+            else if(myId > newId) {
+                for(int i = 0; i < selfi; i++) {
+                    oldIds.add(myHashIds.get(i));
+                    myHashIds.remove(i);
+                }
+                for(int i = newi; i < globals.ringSize; i++) {
+                    oldIds.add(myHashIds.get(i));
+                    myHashIds.remove(i);
+                }
+            }          
+
+            //search through all data and send the ids that we no longer care about
+            for(Data d : dataArr) {
+                if(oldIds.contains(d.dataHash)) {
+                    NewData newData = new NewData(myId, d);
+                    PacketWrapper wrapper = new PacketWrapper((Packet) newData, newId);
+                    forward(wrapper);
+                }
+            }
+
         }
     }
 
