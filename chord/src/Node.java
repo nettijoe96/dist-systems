@@ -49,8 +49,9 @@ abstract class Node implements Runnable{
         
         int self = 0;
         for(int i = 0; i < ids.length; i++) {
-            if(ids[i] == myId) {
+            if(ids[i].equals(myId)) {
                 self = i;
+                break;
             } 
         } 
 
@@ -61,8 +62,8 @@ abstract class Node implements Runnable{
         else {
             prev = ids[self-1];
         }
-        System.out.print("prev: " + prev);
-        System.out.print("self: " + self);
+        System.out.println("prev: " + prev);
+        System.out.println("self: " + self);
 
         if(prev > self) {
             for(int i = prev+1; i < globals.ringSize; i++) {
