@@ -28,7 +28,8 @@ public class Globals {
     public static final String HashIdRelay = "HASH ID RELAY";
 
     // CLI commands
-    public static final String PRINT_TABLE = "print-table";
+    public static final String NODE_TABLE = "nodes";
+    public static final String FINGER_TABLE = "fingertable";
     public static final String NEW_KEY_VALUE = "add";
     public static final String REQUEST_DATA = "request";
     public static final String CLOSE = "close";

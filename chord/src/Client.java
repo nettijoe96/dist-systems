@@ -54,6 +54,6 @@ public class Client extends Node {
     }
 
     public void printTable(){
-        System.out.println( "this command is for the anchor node" );
+        System.out.println("only the anchor node has a nodeTable");
     }
 }

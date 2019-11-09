@@ -78,6 +78,7 @@ class FingerTable {
     public String toString(){
         String builder = "";
 
+        System.out.println("row\tj+2^i\tsuccessor");
         for( int i = 0; i < this.rows; i++ ){
             builder = builder + Integer.toString( i ) + "\t" + this.fingerTableEntries[i].toString();
             builder = builder + "\n";

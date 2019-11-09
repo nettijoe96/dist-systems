@@ -179,11 +179,12 @@ public class Anchor extends Node {
     }
 
     public void printTable(){
-
+        System.out.println("id\tip");
         for( Integer uuid : nodeTable.keySet() ){
             String key = uuid.toString();
             String value = nodeTable.get(uuid);
             System.out.println( key + "\t" + value );
         }
     }
+
 }

@@ -22,12 +22,10 @@ public class CLI implements Runnable{
 
             String command = tokens[0].toLowerCase();
 
-            if( command.equals( this.globals.PRINT_TABLE ) ){
+            if( command.equals( this.globals.NODE_TABLE ) ){
                 this.node.printTable();
-            }else if( command.equals( this.globals.Message ) ){
-                // Deprecated command
-                // System.out.println( "What node do you want to send to?" );
-                node.callManager( new Message( this.node.myId, 4, "Hello World" ) );
+            }else if( command.equals( this.globals.FINGER_TABLE ) ){
+                System.out.println(this.node.fingerTable); 
             }else if(command.equals(this.globals.NEW_KEY_VALUE)) {
                 String[] subtokens = tokens[1].split(" ", 2);
                 if(subtokens.length != 2) {
