@@ -160,6 +160,8 @@ abstract class Node implements Runnable{
             newData(data); 
             System.out.println(myId);
             System.out.println(" received data " + data);
+        }else if( type.equals( this.globals.RequestData ) ){
+            System.out.println("Request for data received");
         }else{
             System.out.println( "Unimplemented command" );
         }
@@ -206,6 +208,24 @@ abstract class Node implements Runnable{
 
     public void newData(Data data) {
         dataArr.add(data);    
+    }
+
+    public void requestData( String key ){
+        int hash = key.hashCode() % globals.ringSize;
+
+        if( myHashIds.contains(hash) ){
+            System.out.println( "The hash is my value" );
+            for( Data d : dataArr ){
+                if( d.key.equals( key ) ){
+                    System.out.println( d );
+                }
+            }
+        }else{
+            RequestData packet = new RequestData( key );
+            PacketWrapper wrapper = new PacketWrapper( (Packet) packet, hash );
+            forward(wrapper);
+        }
+
     }
 
     public void addData(String key, String dataString) {

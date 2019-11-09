@@ -25,6 +25,7 @@ public class CLI implements Runnable{
             if( command.equals( this.globals.PRINT_TABLE ) ){
                 this.node.printTable();
             }else if( command.equals( this.globals.Message ) ){
+                // Deprecated command
                 // System.out.println( "What node do you want to send to?" );
                 node.callManager( new Message( this.node.myId, 4, "Hello World" ) );
             }else if(command.equals(this.globals.NEW_KEY_VALUE)) {
@@ -35,9 +36,12 @@ public class CLI implements Runnable{
                 else {
                     String key = subtokens[0];
                     String dataString = subtokens[1];
-                    System.out.println("before addData call");
                     node.addData(key, dataString);
                 }
+            }else if( command.equals( this.globals.REQUEST_DATA ) ){
+                String key = tokens[1];
+                node.requestData( key );
+
             }else{
                 System.out.println( "TODO implement CLI" );
             }
