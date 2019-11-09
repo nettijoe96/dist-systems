@@ -103,7 +103,6 @@ public class Anchor extends Node {
                 else if (type.equals(globals.InitiateClose)) {  //for initiateClose type
                     nodesMutex.acquire();
                     int oldId = packet.getId();
-                    System.out.println("oldId" + oldId);
                     int successor;
                     int oldi = 0;
                     Integer[] ids = nodeTable.keySet().toArray(new Integer[0]);
@@ -137,7 +136,6 @@ public class Anchor extends Node {
                         sender.join();
                     }
                     out.writeObject( new CloseResponse(successor, successorIp) ); //final response to closing node. 
-                    System.out.println("after anchor ack");
 
                     nodesMutex.release();
                 }
@@ -182,7 +180,6 @@ public class Anchor extends Node {
                 if(ack) {
                     Packet packet = (Packet) in.readObject(); 
                     if(packet.getPacketType().equals(globals.ACK)) {
-                        System.out.println("anchor recieved ack from id: " + dest);
                         return;
                     }
                 }

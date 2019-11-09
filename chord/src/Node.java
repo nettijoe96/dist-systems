@@ -74,8 +74,6 @@ abstract class Node implements Runnable{
         else {
             prev = ids[self-1];
         }
-        System.out.println("prev: " + prev);
-        System.out.println("self: " + self);
 
         if(prev > myId) {
             for(int i = prev+1; i < globals.ringSize; i++) {
@@ -139,11 +137,7 @@ abstract class Node implements Runnable{
             ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
 
             out.writeObject( wrapper );
-            System.out.println("wrapper sent to id: " );
-            System.out.println(wrapper.destination);
-            System.out.println(forwardTo.nodeIp);
             Packet response = (Packet) in.readObject();
-            System.out.println( response );
 
             out.close();
             in.close();
@@ -164,20 +158,16 @@ abstract class Node implements Runnable{
     public void callManager( Packet packet ){
         String type = packet.getPacketType();
         System.out.println( "packet type:\t" + type );
-        if( type.equals( this.globals.Connect ) ){
-            System.out.println( "TODO: implement connect, maybe... I don't think we have to do this");
-        }else if( type.equals( this.globals.NewClient ) ){
+        if( type.equals( this.globals.NewClient ) ){
             NewClient newClient = (NewClient) packet;
             int newId = newClient.getId();
             String ip = newClient.ip;
             fingerTable.newClient(newId, ip);  //adjust fingertable with new client
             redistributeData(newId);
-            System.out.println(fingerTable.toString());
         }else if( type.equals( this.globals.NewData ) ){
             NewData newData = (NewData) packet;         
             Data data = newData.data;
             newData(data); 
-            System.out.println(myId);
             System.out.println(" received data " + data);
         }else if( type.equals( this.globals.RequestData ) ){
             System.out.println("Request for data received");
@@ -203,7 +193,6 @@ abstract class Node implements Runnable{
             int successor = close.successor;
             String successorIp = close.successorIp;
             fingerTable.closeClient(oldId, successor, successorIp);
-            System.out.println(fingerTable);
         }else if( type.equals( this.globals.HashIdRelay ) ){
             HashIdRelay idRelay = (HashIdRelay) packet;
             myHashIds.addAll( idRelay.hashIds );
@@ -246,7 +235,6 @@ abstract class Node implements Runnable{
                     myHashIds.remove(i);
                 }
             }          
-            System.out.println("myHashIds: " + myHashIds);
             //search through all data and send the ids that we no longer care about
             ArrayList<Data> toRemove = new ArrayList<Data>();
             for(Data d : dataArr) {
@@ -301,11 +289,11 @@ abstract class Node implements Runnable{
         int hash = data.dataHash; 
 
         if(myHashIds.contains(hash)) {
-            System.out.println("the hash is my value");
+            System.out.println("the hash is my key");
             newData(data);  
         }
         else {
-            System.out.println("the hash is someone elses value");
+            System.out.println("the hash is someone elses key");
             NewData newData = new NewData(myId, data);
             PacketWrapper wrapper = new PacketWrapper((Packet) newData, hash);
             forward(wrapper);
@@ -324,7 +312,6 @@ abstract class Node implements Runnable{
     public void close() {
         try {
             //send client close to anchor
-            System.out.println("myId" + myId);
             InitiateClose initiateClose = new InitiateClose(myId);
             Socket socket = new Socket( this.globals.ANCHOR_IP, this.globals.ANCHOR_PORT);
             ObjectOutputStream out = new ObjectOutputStream(  socket.getOutputStream());
@@ -337,7 +324,6 @@ abstract class Node implements Runnable{
                 int successor = closeResponse.successor;
                 String successorIp = closeResponse.successorIp;
                 fingerTable.closeClient(myId, successor, successorIp);
-                System.out.println("after receiving ack");
                 System.out.println(fingerTable);
                 // Forward hashIds to successor
                 HashIdRelay hashIdRelay = new HashIdRelay( myId, myHashIds );
@@ -351,7 +337,6 @@ abstract class Node implements Runnable{
                     forward(wrapper);
                 } 
             }
-            System.out.println("before running = false");
             this.running = false;
             System.exit(0);
         }catch( ClassNotFoundException e ){
@@ -400,6 +385,6 @@ abstract class Node implements Runnable{
                 e.printStackTrace();
             }
         }
-        System.out.print("exiting run");
+        System.out.println("exiting");
     }
 }

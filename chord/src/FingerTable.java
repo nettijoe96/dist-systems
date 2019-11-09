@@ -60,8 +60,6 @@ class FingerTable {
     * @param successor's ip
     */
     public void closeClient(int oldId, int successor, String successorIp) {
-        System.out.println("successor in closeClient" + successor);
-        System.out.println("oldId in closeClient" + oldId);
         for(FingerTableEntry e: fingerTableEntries) {
             if (e.successorNumber.equals(oldId)) {
                 e.successorNumber = successor;
