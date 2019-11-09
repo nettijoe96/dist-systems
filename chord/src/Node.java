@@ -128,6 +128,7 @@ abstract class Node implements Runnable{
             out.writeObject( wrapper );
             System.out.println("wrapper sent to id: " );
             System.out.println(wrapper.destination);
+            System.out.println(forwardTo.nodeIp);
             Packet response = (Packet) in.readObject();
             System.out.println( response );
 
@@ -192,6 +193,7 @@ abstract class Node implements Runnable{
             System.out.println( "Unimplemented command" );
         }
     }
+
 
 
     public void redistributeData(int newId) {
