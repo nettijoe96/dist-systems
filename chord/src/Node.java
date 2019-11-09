@@ -162,6 +162,23 @@ abstract class Node implements Runnable{
             System.out.println(" received data " + data);
         }else if( type.equals( this.globals.RequestData ) ){
             System.out.println("Request for data received");
+            RequestData request = (RequestData) packet;
+            String key = request.key;
+            int requester = request.requester;
+            Data replyData = null;
+            for( Data d : dataArr ){
+                if( d.key.equals( key ) ){
+                    replyData = d;
+                }
+            }
+
+            ReplyData reply = new ReplyData( replyData );
+            PacketWrapper replyPacket = new PacketWrapper( reply, requester );
+            forward( replyPacket );
+        }else if( type.equals( this.globals.ReplyData ) ){
+            ReplyData reply = (ReplyData) packet;
+            System.out.println( "Data Reply:" );
+            System.out.println( reply.data );
         }else{
             System.out.println( "Unimplemented command" );
         }
@@ -171,9 +188,9 @@ abstract class Node implements Runnable{
     public void redistributeData(int newId) {
         ArrayList<Integer> oldIds = new ArrayList<Integer>();
         if(myHashIds.contains(newId)) {
+            Collections.sort(myHashIds);
             int newi = myHashIds.indexOf(newId);
             //change the myHashIds
-            Collections.sort(myHashIds);
             int selfi = myHashIds.indexOf(myId); 
             
 
@@ -221,7 +238,7 @@ abstract class Node implements Runnable{
                 }
             }
         }else{
-            RequestData packet = new RequestData( key );
+            RequestData packet = new RequestData( key, myId);
             PacketWrapper wrapper = new PacketWrapper( (Packet) packet, hash );
             forward(wrapper);
         }
