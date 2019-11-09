@@ -1,7 +1,9 @@
 package utility;
 
+import java.io.Serializable;
 
-public class PacketWrapper {
+
+public class PacketWrapper implements Serializable {
 
 
     public int destination;
