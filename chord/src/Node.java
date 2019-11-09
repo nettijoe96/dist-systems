@@ -230,13 +230,16 @@ abstract class Node implements Runnable{
             }          
             System.out.println("myHashIds: " + myHashIds);
             //search through all data and send the ids that we no longer care about
+            ArrayList<Data> toRemove = new ArrayList<Data>();
             for(Data d : dataArr) {
                 if(oldIds.contains(d.dataHash)) {
+                    toRemove.add(d);
                     NewData newData = new NewData(myId, d);
                     PacketWrapper wrapper = new PacketWrapper((Packet) newData, newId);
                     forward(wrapper);
                 }
             }
+            dataArr.removeAll(toRemove);
 
         }
     }
