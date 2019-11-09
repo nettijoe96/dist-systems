@@ -28,6 +28,8 @@ abstract class Node implements Runnable{
         this.myId = id;
         this.fingerTable = new FingerTable(id);
         this.dataArr = new ArrayList<Data>();
+        this.myHashIds = new ArrayList<Integer>();
+        this.myHashIds.add(myId);
         try{
             this.serverSocket = new ServerSocket( this.globals.PORT );
         } catch( IOException e ){
