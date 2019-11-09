@@ -176,17 +176,17 @@ abstract class Node implements Runnable{
             
 
             if(myId < newId) {
-                for(int i = selfi+1; i <= newi; i++) {
+                for(int i = newi; i > selfi; i--) {
                     oldIds.add(myHashIds.get(i));
                     myHashIds.remove(i);
                 }
             }
             else if(myId > newId) {
-                for(int i = 0; i < selfi; i++) {
+                for(int i = selfi; i >= 0; i--) {
                     oldIds.add(myHashIds.get(i));
                     myHashIds.remove(i);
                 }
-                for(int i = newi; i < globals.ringSize; i++) {
+                for(int i = globals.ringSize; i < newi; i--) {
                     oldIds.add(myHashIds.get(i));
                     myHashIds.remove(i);
                 }
