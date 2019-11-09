@@ -74,9 +74,9 @@ public class Anchor extends Node {
                     fingerTable.processNodeTable(nodeTable);
                     nodesMutex.release();
                     NewClient newClient = new NewClient(newId, ip);
-                    for(Integer id : nodeTable.keySet()) {
-                        if(id != newId) {
-                            AnchorSender sender = new AnchorSender(nodeTable.get(id), (Packet) newClient);
+                    for(Integer nodeId : nodeTable.keySet()) {
+                        if(nodeId != newId) {
+                            AnchorSender sender = new AnchorSender(nodeId, nodeTable.get(nodeId), (Packet) newClient);
                             sender.start();
                         }
                     }
@@ -106,10 +106,12 @@ public class Anchor extends Node {
 
         String ip; 
         Packet packet;
+        int dest;
 
-        AnchorSender(String ip, Packet packet) {
+        AnchorSender(int dest, String ip, Packet packet) {
             this.ip = ip;
             this.packet = packet;
+            this.dest = dest;
         }
 
         public void run() {
@@ -118,7 +120,8 @@ public class Anchor extends Node {
                 Socket socket = new Socket(ip, globals.PORT);
                 ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
                 ObjectInputStream in = new ObjectInputStream( socket.getInputStream() ); 
-                out.writeObject(packet);
+                PacketWrapper wrapper = new PacketWrapper(packet, dest);
+                out.writeObject(wrapper);
             }
             catch (IOException e) {
                 e.printStackTrace();
