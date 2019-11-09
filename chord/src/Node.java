@@ -44,6 +44,10 @@ abstract class Node implements Runnable{
     } 
 
 
+    public void showHashIds(){
+        System.out.println("Hash Ids:\t" + this.myHashIds );
+    }
+
     public void initMyHashIds(HashMap<Integer, String> nodeTable) {
         
         System.out.println(nodeTable);

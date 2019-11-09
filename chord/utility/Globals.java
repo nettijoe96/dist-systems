@@ -31,4 +31,5 @@ public class Globals {
     public static final String NEW_KEY_VALUE = "add";
     public static final String REQUEST_DATA = "request";
     public static final String CLOSE = "close";
+    public static final String HASH_IDS = "ids";
 }

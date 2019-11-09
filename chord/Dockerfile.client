@@ -10,4 +10,4 @@ ADD utility/*.java /chord/utility/
 #EXPOSE 40000  # client
 
 RUN javac src/*.java
-
+RUN javac utility/*.java
