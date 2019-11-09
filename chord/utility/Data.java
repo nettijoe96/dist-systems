@@ -19,4 +19,9 @@ public class Data implements Serializable{
         return key.hashCode() % globals.ringSize;
     }
 
+    @Override
+    public String toString(){
+        return key + ":\t" + dataString;   
+    }
+
 }
