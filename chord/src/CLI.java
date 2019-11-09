@@ -16,7 +16,7 @@ public class CLI implements Runnable{
     public void run(){
         System.out.println( "Starting Command Line Service" );
         Scanner in = new Scanner(System.in);
-        while(true){
+        while(node.running){
             String input = in.nextLine().toLowerCase();
             String[] tokens = input.split(" ", 2);
 
@@ -38,6 +38,8 @@ public class CLI implements Runnable{
                     System.out.println("before addData call");
                     node.addData(key, dataString);
                 }
+            }else if( command.equals( this.globals.CLOSE ) ){
+                node.close();
             }else{
                 System.out.println( "TODO implement CLI" );
             }

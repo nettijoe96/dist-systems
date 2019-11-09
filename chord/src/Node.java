@@ -26,6 +26,7 @@ abstract class Node implements Runnable{
     public Globals globals = new Globals();
     private ArrayList<Data> dataArr;
     public ArrayList<Integer> myHashIds; //the ids that are offline before this node
+    public Boolean running;
 
     public Node( Integer id ){
         this.myId = id;
@@ -33,6 +34,7 @@ abstract class Node implements Runnable{
         this.dataArr = new ArrayList<Data>();
         this.myHashIds = new ArrayList<Integer>();
         this.myHashIds.add(myId);
+        this.running = true;
         try{
             this.serverSocket = new ServerSocket( this.globals.PORT );
         } catch( IOException e ){
@@ -160,6 +162,11 @@ abstract class Node implements Runnable{
             newData(data); 
             System.out.println(myId);
             System.out.println(" received data " + data);
+        }else if( type.equals( this.globals.CloseRelay ) ){
+            CloseRelay close = (CloseRelay) packet;
+            int oldId = close.oldId;
+            int successor = close.successor;
+            fingerTable.closeClient(oldId, successor);
         }else{
             System.out.println( "Unimplemented command" );
         }
@@ -219,11 +226,44 @@ abstract class Node implements Runnable{
         else {
             System.out.println("the hash is someone elses value");
             NewData newData = new NewData(myId, data);
-            //int destination = fingerTable.getDestinationIp(hash);
             PacketWrapper wrapper = new PacketWrapper((Packet) newData, hash);
             forward(wrapper);
         }
     }
+
+ 
+    public void close() {
+        try {
+            //send client close to anchor
+            InitiateClose initiateClose = new InitiateClose(myId);
+            Socket socket = new Socket( this.globals.ANCHOR_IP, this.globals.ANCHOR_PORT);
+            ObjectOutputStream out = new ObjectOutputStream(  socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
+            out.writeObject(initiateClose);
+            //wait until anchor responds with an ack, which means that everyone updated their fingertable
+            Packet packet = (Packet) in.readObject();
+            if(packet.getPacketType().equals(Globals.ACK)) {
+                System.out.println("after receiving ack");
+                //redistribute data (go through every data element and treat it as new data)
+                for(Data d : dataArr) {
+                    NewData newData = new NewData(myId, d);
+                    PacketWrapper wrapper = new PacketWrapper((Packet) newData, d.dataHash);
+                    forward(wrapper);
+                } 
+            }
+            else {
+                //TODO: error
+            }
+            System.out.println("before running = false");
+            this.running = false;
+            System.exit(0);
+        }catch( ClassNotFoundException e ){
+            e.printStackTrace();
+        }catch( IOException e ){
+                e.printStackTrace();
+        }
+    }
+
 
     public void processWrapper(PacketWrapper wrapper) {
         if(myHashIds.contains(wrapper.destination)) {
@@ -236,14 +276,14 @@ abstract class Node implements Runnable{
     }
     
     public void run(){
-        while( true ){
+        while( running ){
             try{
                 Socket socket = this.serverSocket.accept();
                 ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
                 ObjectOutputStream out = new ObjectOutputStream( socket.getOutputStream() );
                 PacketWrapper wrapper = (PacketWrapper) in.readObject();
                 processWrapper(wrapper);
-                out.writeObject( new Packet( "ack", this.myId ) );
+                out.writeObject( new Packet(Globals.ACK, this.myId ) );
                 in.close();
                 out.close();
                 socket.close();
@@ -255,5 +295,6 @@ abstract class Node implements Runnable{
                 e.printStackTrace();
             }
         }
+        System.out.print("exiting run");
     }
 }

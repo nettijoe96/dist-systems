@@ -79,17 +79,48 @@ public class Anchor extends Node {
                     NewClient newClient = new NewClient(newId, ip);
                     for(Integer nodeId : nodeTable.keySet()) {
                         if(nodeId != newId) {
-                            AnchorSender sender = new AnchorSender(nodeId, nodeTable.get(nodeId), (Packet) newClient);
+                            AnchorSender sender = new AnchorSender(nodeId, nodeTable.get(nodeId), (Packet) newClient, false);
                             sender.start();
                         }
                     }
                     AnchorResponse response = new AnchorResponse(nodeTable);
                     out.writeObject(response);
                 }
-                else if (type.equals(globals.ClientClose)) {
+                else if (type.equals(globals.InitiateClose)) {
                     nodesMutex.acquire();
-                    nodeTable.remove(packet.getId()); 
-                    fingerTable.processNodeTable(nodeTable);
+
+                    int oldId = packet.getId();
+                    int successor;
+                    int oldi = 0;
+                    Integer[] ids = nodeTable.keySet().toArray(new Integer[0]);
+                    Arrays.sort(ids);
+                    for(int i = 0; i < ids.length; i++) {
+                        if(ids[i].equals(oldId)) {
+                            oldi = i;
+                            break;
+                        }
+                    } 
+                    if(oldi == 0) {
+                        successor = ids[ids.length-1];
+                    }
+                    else {
+                        successor = oldi-1;
+                    }
+                    fingerTable.closeClient(oldId, successor);
+                    nodeTable.remove(oldId); 
+                    CloseRelay closeRelay = new CloseRelay(oldId, successor);
+                    ArrayList<AnchorSender> senders = new ArrayList<AnchorSender>();
+                    for(Integer nodeId : nodeTable.keySet()) {
+                        AnchorSender sender = new AnchorSender(nodeId, nodeTable.get(nodeId), (Packet) closeRelay, true);
+                        senders.add(sender);
+                        sender.start();
+                    }
+                    for(AnchorSender sender : senders) {
+                        sender.join();
+                    }
+                    out.writeObject( new Packet(Globals.ACK, 0 ) );
+                    System.out.println("after anchor ack");
+
                     nodesMutex.release();
                 }
             }
@@ -110,11 +141,13 @@ public class Anchor extends Node {
         String ip; 
         Packet packet;
         int dest;
+        Boolean ack;
 
-        AnchorSender(int dest, String ip, Packet packet) {
+        AnchorSender(int dest, String ip, Packet packet, Boolean ack) {
             this.ip = ip;
             this.packet = packet;
             this.dest = dest;
+            this.ack = ack;
         }
 
         public void run() {
@@ -125,8 +158,18 @@ public class Anchor extends Node {
                 ObjectInputStream in = new ObjectInputStream( socket.getInputStream() ); 
                 PacketWrapper wrapper = new PacketWrapper(packet, dest);
                 out.writeObject(wrapper);
+                if(ack) {
+                    Packet packet = (Packet) in.readObject(); 
+                    if(packet.getPacketType().equals(globals.ACK)) {
+                        System.out.println("anchor recieved ack from id: " + dest);
+                        return;
+                    }
+                }
             }
             catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }       
