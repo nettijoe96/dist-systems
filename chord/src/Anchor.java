@@ -19,6 +19,9 @@ public class Anchor extends Node {
         nodeTable = new HashMap<Integer, String>();
         nodeTable.put( 0, this.globals.ANCHOR_IP );
         fingerTable.processNodeTable(nodeTable);
+        for(int i = 1; i < globals.ringSize; i++) {  //add all myHashIds
+            myHashIds.add(i);
+        }
     }
 
     public static void main( String[] arg ){

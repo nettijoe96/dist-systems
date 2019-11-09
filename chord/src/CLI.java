@@ -35,6 +35,7 @@ public class CLI implements Runnable{
                 else {
                     String key = subtokens[0];
                     String dataString = subtokens[1];
+                    System.out.println("before addData call");
                     node.addData(key, dataString);
                 }
             }else{

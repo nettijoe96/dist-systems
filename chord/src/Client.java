@@ -39,7 +39,8 @@ public class Client extends Node {
 
             AnchorResponse anchorResponse = (AnchorResponse) in.readObject();
             this.fingerTable.processNodeTable(anchorResponse.nodeTable); 
-
+            initMyHashIds(anchorResponse.nodeTable);
+            System.out.println("my hashids " + myHashIds);
             //More for troubleshooting, but just printing the fingertable that we generated
             System.out.println( "Finger table;" );
             System.out.println( this.fingerTable );

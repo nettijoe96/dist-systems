@@ -5,6 +5,8 @@ import java.net.*;
 import java.io.*;
 import utility.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Arrays;
 
 /*
  * Abstract class Node
@@ -22,7 +24,7 @@ abstract class Node implements Runnable{
     protected ServerSocket serverSocket;
     public Globals globals = new Globals();
     private ArrayList<Data> dataArr;
-    private ArrayList<Integer> myHashIds;
+    public ArrayList<Integer> myHashIds; //the ids that are offline before this node
 
     public Node( Integer id ){
         this.myId = id;
@@ -37,6 +39,46 @@ abstract class Node implements Runnable{
             e.printStackTrace();
         }
     } 
+
+
+    public void initMyHashIds(HashMap<Integer, String> nodeTable) {
+        
+        System.out.println(nodeTable);
+        Integer[] ids = nodeTable.keySet().toArray(new Integer[0]);
+        Arrays.sort(ids);
+        
+        int self = 0;
+        for(int i = 0; i < ids.length; i++) {
+            if(ids[i] == myId) {
+                self = i;
+            } 
+        } 
+
+        int prev;
+        if(self == 0) {
+            prev = ids[ids.length-1];
+        }
+        else {
+            prev = ids[self-1];
+        }
+        System.out.print("prev: " + prev);
+        System.out.print("self: " + self);
+
+        if(prev > self) {
+            for(int i = prev+1; i < globals.ringSize; i++) {
+                myHashIds.add(i);
+            }
+            for(int i = 0; i < self; i++) {
+                myHashIds.add(i);
+            }
+        }
+        else {
+            for(int i = prev+1; i < self; i++) {
+                myHashIds.add(i);
+            }
+        }
+
+    }
 
     public void forward( PacketWrapper wrapper ){
         int dest = wrapper.destination;
@@ -80,7 +122,8 @@ abstract class Node implements Runnable{
             ObjectInputStream in = new ObjectInputStream( socket.getInputStream() );
 
             out.writeObject( wrapper );
-
+            System.out.println("wrapper sent to id: " );
+            System.out.println(wrapper.destination);
             Packet response = (Packet) in.readObject();
             System.out.println( response );
 
@@ -112,6 +155,8 @@ abstract class Node implements Runnable{
             NewData newData = (NewData) packet;         
             Data data = newData.data;
             newData(data); 
+            System.out.println(myId);
+            System.out.println(" received data" + data.dataString);
         }else{
             System.out.println( "Unimplemented command" );
         }
@@ -119,9 +164,6 @@ abstract class Node implements Runnable{
 
     public void newData(Data data) {
         dataArr.add(data);    
-        if(!myHashIds.contains(data.dataHash)) {
-            myHashIds.add(data.dataHash);
-        }
     }
 
     public void addData(String key, String dataString) {
@@ -129,9 +171,11 @@ abstract class Node implements Runnable{
         int hash = data.dataHash; 
 
         if(myHashIds.contains(hash)) {
+            System.out.println("the hash is my value");
             newData(data);  
         }
         else {
+            System.out.println("the hash is someone elses value");
             NewData newData = new NewData(myId, data);
             //int destination = fingerTable.getDestinationIp(hash);
             PacketWrapper wrapper = new PacketWrapper((Packet) newData, hash);
@@ -140,7 +184,7 @@ abstract class Node implements Runnable{
     }
 
     public void processWrapper(PacketWrapper wrapper) {
-        if(wrapper.atDestination(myId)) {
+        if(myHashIds.contains(wrapper.destination)) {
             Packet packet = (Packet) wrapper.packet; 
             callManager( packet );
         }
