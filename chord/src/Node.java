@@ -245,6 +245,14 @@ abstract class Node implements Runnable{
 
     public void newData(Data data) {
         dataArr.add(data);    
+        //Write the file to the disk
+        try{
+            FileWriter writer = new FileWriter( data.key, true );
+            writer.write( data.dataString );
+            writer.close();
+        }catch( IOException e ){
+            System.out.println( "Error writing file to disk" );
+        }
     }
 
     public void requestData( String key ){
