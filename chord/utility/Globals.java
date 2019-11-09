@@ -20,7 +20,6 @@ public class Globals {
     //node
     public static final String InitiateClose = "INITIATE CLOSE";
     public static final String Connect = "CONNECT";
-    public static final String Message = "message";
     public static final String NewClient = "NEW CLIENT";
     public static final String NewData = "NEW DATA";
     public static final String RequestData = "REQUEST DATA";
