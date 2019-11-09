@@ -44,6 +44,8 @@ public class CLI implements Runnable{
 
             }else if( command.equals( this.globals.CLOSE ) ){
                 node.close();
+            }else if( command.equals( this.globals.HASH_IDS ) ){
+                node.showHashIds();
             }else{
                 System.out.println( "TODO implement CLI" );
             }
