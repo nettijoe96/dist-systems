@@ -62,7 +62,9 @@ public class CLI implements Runnable{
 
                     node.addData( fName, dataString );
                 }catch( FileNotFoundException e ){
-                    System.out.println( "File not found" );
+                    String[] tmp = tokens[1].split( " ", 2 );
+
+                    node.addData( tmp[0], tmp[1] );
                 }catch( IOException e ){
                     System.out.println( "Error Reading File" );
                 }
