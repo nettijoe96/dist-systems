@@ -1,9 +1,10 @@
 This is an implementation of a Chord-DHT.
 
+## build and run
+
 To compile run from the /chord directory:
 
 `$./build.sh`
-
 
 The anchor node must be started before any other node, so run 
 
@@ -14,7 +15,7 @@ Then clients can join the network by running
 `$ ./runClient <client uuid>`
 
 
-Once the network is established there are the following commands available to all nodes:
+## CLI commands:
 
 add <filename>  -  this will add a local file to the network 
 
