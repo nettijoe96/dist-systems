@@ -68,18 +68,6 @@ public class CLI implements Runnable{
                 }catch( IOException e ){
                     System.out.println( "Error Reading File" );
                 }
-                    
-                /*
-                String[] subtokens = tokens[1].split(" ", 2);
-                if(subtokens.length != 2) {
-                    System.out.println("must provide key and value"); 
-                } 
-                else {
-                    String key = subtokens[0];
-                    String dataString = subtokens[1];
-                    node.addData(key, dataString);
-                }
-                */
             }else if( command.equals( this.globals.REQUEST_DATA ) ){
                 String key = tokens[1];
                 node.requestData( key );
