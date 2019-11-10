@@ -168,7 +168,6 @@ abstract class Node implements Runnable{
             NewData newData = (NewData) packet;         
             Data data = newData.data;
             newData(data); 
-            System.out.println(" received data " + data);
         }else if( type.equals( this.globals.RequestData ) ){
             System.out.println("Request for data received");
             RequestData request = (RequestData) packet;
@@ -247,9 +246,28 @@ abstract class Node implements Runnable{
             }
             dataArr.removeAll(toRemove);
 
+            // Remove the files from disk
+            for( Data d : toRemove ){
+
+                File file = new File( d.key );
+                file.delete();
+            }
+
+
         }
     }
 
+    public void newData(Data data) {
+        dataArr.add(data);    
+        //Write the file to the disk
+        try{
+            FileWriter writer = new FileWriter( data.key, true );
+            writer.write( data.dataString );
+            writer.close();
+        }catch( IOException e ){
+            System.out.println( "Error writing file to disk" );
+        }
+    }
 
   
     /*
@@ -274,18 +292,14 @@ abstract class Node implements Runnable{
 
     }
 
-    public void newData(Data data) {
-        dataArr.add(data);    
-    }
-
 
     /*
     add data to the current node or forward the message
     @param: key
     @param: dataString
     */
-    public void addData(String key, String dataString) {
-        Data data = new Data(key, dataString);
+    public void addData(String fName, String dataString) {
+        Data data = new Data(fName, dataString);
         int hash = data.dataHash; 
 
         if(myHashIds.contains(hash)) {

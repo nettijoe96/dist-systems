@@ -20,7 +20,6 @@ public class Globals {
     //node
     public static final String InitiateClose = "INITIATE CLOSE";
     public static final String Connect = "CONNECT";
-    public static final String Message = "message";
     public static final String NewClient = "NEW CLIENT";
     public static final String NewData = "NEW DATA";
     public static final String RequestData = "REQUEST DATA";
@@ -35,4 +34,5 @@ public class Globals {
     public static final String REQUEST_DATA = "request";
     public static final String CLOSE = "close";
     public static final String HASH_IDS = "ids";
+    public static final String FILES = "files";
 }
